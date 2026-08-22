@@ -65,22 +65,22 @@ export function computeDailyMetrics(orders: Order[], conversations: Conv[]): Dai
 export function deterministicNarrative(m: DailyMetrics): { en: string; ar: string } {
   const en = [
     `Today: ${m.todayConversations} conversations, ${m.todayOrders} orders (${m.todayHotLeads} hot leads).`,
-    `Revenue today: AED ${m.todayPaidAed.toLocaleString()} from paid orders. Pending payment links worth AED ${m.todayPendingAed.toLocaleString()}.`,
-    m.topProduct ? `Best mover: ${m.topProduct}.` : `No paid orders yet today — focus on hot leads.`,
-    m.topEmirate ? `Top emirate today: ${m.topEmirate}.` : `No emirate concentration yet.`,
-    `Conversion (today): ${m.conversionPercent}%.`,
-    m.todayComplaints ? `⚠ ${m.todayComplaints} complaint(s) opened today — review the dispute queue before close.` : `No complaints today.`,
-    m.todayLost ? `${m.todayLost} lost lead(s) — tag the lost-reason for the weekly review.` : ``,
+    `Revenue today: AED ${m.todayPaidAed.toLocaleString()} confirmed. Pending links: AED ${m.todayPendingAed.toLocaleString()}.`,
+    m.topProduct ? `Top mover: ${m.topProduct}.` : `No paid orders yet today — prioritise hot leads.`,
+    m.topEmirate ? `Highest orders from: ${m.topEmirate}.` : `No clear emirate concentration yet.`,
+    `Conversion rate today: ${m.conversionPercent}%.`,
+    m.todayComplaints ? `${m.todayComplaints} complaint(s) opened today — clear the dispute queue before end of day.` : `No complaints today.`,
+    m.todayLost ? `${m.todayLost} lead(s) marked lost — log the reason for the weekly review.` : ``,
   ].filter(Boolean).join("\n");
 
   const ar = [
-    `اليوم: ${m.todayConversations} محادثة، ${m.todayOrders} طلب (${m.todayHotLeads} عميل جدّي).`,
-    `الإيرادات اليوم: ${m.todayPaidAed.toLocaleString()} درهم من طلبات مدفوعة. روابط دفع معلّقة بقيمة ${m.todayPendingAed.toLocaleString()} درهم.`,
-    m.topProduct ? `الأكثر مبيعاً: ${m.topProduct}.` : `لا توجد طلبات مدفوعة بعد اليوم — ركّز على العملاء الجدّيين.`,
-    m.topEmirate ? `أكثر إمارة اليوم: ${m.topEmirate}.` : `لا تركّز حسب الإمارة بعد.`,
+    `اليوم: ${m.todayConversations} محادثة، ${m.todayOrders} طلب منها ${m.todayHotLeads} عميل جدّي.`,
+    `الإيرادات المؤكدة: ${m.todayPaidAed.toLocaleString()} درهم. روابط دفع قيد الانتظار: ${m.todayPendingAed.toLocaleString()} درهم.`,
+    m.topProduct ? `الأكثر مبيعاً اليوم: ${m.topProduct}.` : `لا توجد طلبات مدفوعة بعد — ركّز على العملاء الجدّيين.`,
+    m.topEmirate ? `أعلى طلبات من إمارة: ${m.topEmirate}.` : `لا يوجد تركّز واضح في إمارة معينة حتى الآن.`,
     `معدّل التحويل اليوم: ${m.conversionPercent}%.`,
-    m.todayComplaints ? `⚠ ${m.todayComplaints} شكوى مفتوحة اليوم — راجع قائمة النزاعات قبل نهاية الدوام.` : `لا شكاوى اليوم.`,
-    m.todayLost ? `${m.todayLost} عميل محتمل مفقود — سجّل السبب للمراجعة الأسبوعية.` : ``,
+    m.todayComplaints ? `${m.todayComplaints} شكوى مفتوحة اليوم — راجع قائمة النزاعات قبل نهاية الدوام.` : `لا شكاوى اليوم.`,
+    m.todayLost ? `${m.todayLost} عميل محتمل خرج من القمع — سجّل السبب للمراجعة الأسبوعية.` : ``,
   ].filter(Boolean).join("\n");
 
   return { en, ar };

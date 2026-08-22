@@ -16,11 +16,11 @@ export default async function PromptsPage() {
   return (
     <div className="mx-auto max-w-4xl">
       <PageHeader
-        title="Prompt Management"
-        subtitle="The owner-editable prompt library that drives the AI agent. DB rows override the code defaults at runtime."
+        title="إدارة الردود الآلية"
+        subtitle="مكتبة الردود التي يمكن لصاحب العمل تعديلها. البيانات في قاعدة البيانات تتجاوز الإعدادات الافتراضية في الكود عند التشغيل."
       />
       <DemoBanner demoMode={demoMode} />
-      <SectionTitle action={<span className="muted">{keys.length} prompt keys</span>}>Prompt library</SectionTitle>
+      <SectionTitle action={<span className="muted">{keys.length} مفاتيح</span>}>مكتبة الردود</SectionTitle>
       <div className="flex flex-col gap-3">
         {keys.map((k) => {
           const db = dbByKey.get(k);

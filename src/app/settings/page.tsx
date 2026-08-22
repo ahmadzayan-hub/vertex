@@ -20,29 +20,29 @@ export default async function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <PageHeader title="Settings" subtitle="Everything that affects pricing, VAT, reservation windows, and the AI is configurable. Nothing hard-coded." />
+      <PageHeader title="الإعدادات" subtitle="كل ما يؤثر على التسعير وضريبة القيمة المضافة ونوافذ الحجز والذكاء الاصطناعي قابل للتهيئة. لا شيء مُثبَّت في الكود." />
       <DemoBanner demoMode={settingsRes.demoMode} />
 
       <div className="card mb-4">
-        <SectionTitle>AI provider</SectionTitle>
+        <SectionTitle>مزوّد الذكاء الاصطناعي</SectionTitle>
         <dl className="grid grid-cols-1 gap-1 text-sm md:grid-cols-2">
-          <Row k="Provider" v={PROVIDER} />
-          <Row k="Model" v={MODEL} />
-          <Row k="Owner approval matrix" v="14 actions blocked from auto-approval" />
-          <Row k="Mock fallback" v="Safe placeholder when no API key is set" />
+          <Row k="المزوّد" v={PROVIDER} />
+          <Row k="النموذج" v={MODEL} />
+          <Row k="مصفوفة الموافقة" v="14 إجراءً محظوراً من الموافقة التلقائية" />
+          <Row k="وضع المحاكاة" v="رد آمن عند غياب مفتاح API" />
         </dl>
-        <p className="mt-2 text-xs text-gray-500">
-          Change provider by setting <code>AI_PROVIDER</code> (one of: <code>openai</code>, <code>anthropic</code>, <code>gemini</code>, <code>groq</code>, <code>together</code>, <code>openai_compatible</code>) and the matching API key on the host.
+        <p className="mt-2 text-xs text-gray-500" lang="ar">
+          غيّر المزوّد بضبط <code>AI_PROVIDER</code> (إحدى القيم: <code>openai</code>, <code>anthropic</code>, <code>gemini</code>, <code>groq</code>, <code>together</code>, <code>openai_compatible</code>) مع مفتاح API المناسب على الخادم.
         </p>
       </div>
 
       <div className="card mb-4">
-        <SectionTitle>System settings</SectionTitle>
+        <SectionTitle>إعدادات النظام</SectionTitle>
         {settingsRes.rows.length === 0 ? (
-          <p className="text-sm text-gray-500">No settings rows yet.</p>
+          <p className="text-sm text-gray-500" lang="ar">لا توجد إعدادات بعد.</p>
         ) : (
           <table className="tbl">
-            <thead><tr><th>Key</th><th>Value</th><th>Updated</th></tr></thead>
+            <thead><tr><th>المفتاح</th><th>القيمة</th><th>آخر تحديث</th></tr></thead>
             <tbody>
               {settingsRes.rows.map((s) => (
                 <tr key={s.key as string}>
@@ -57,9 +57,9 @@ export default async function SettingsPage() {
       </div>
 
       <div className="card">
-        <SectionTitle>Product catalogue</SectionTitle>
+        <SectionTitle>كتالوج المنتجات</SectionTitle>
         <table className="tbl">
-          <thead><tr><th>Product</th><th>Category</th><th>Default price</th><th>Notes</th><th>Active</th></tr></thead>
+          <thead><tr><th>المنتج</th><th>الفئة</th><th>السعر الافتراضي</th><th>ملاحظات</th><th>نشط</th></tr></thead>
           <tbody>
             {productsRes.rows.map((p) => (
               <tr key={p.id as string}>
@@ -67,7 +67,7 @@ export default async function SettingsPage() {
                 <td className="text-xs text-gray-500">{(p.category as string).replace(/_/g, " ")}</td>
                 <td>{formatAed(Number(p.default_price))}</td>
                 <td className="text-xs text-gray-500">{(p.claim_notes as string) ?? "—"}</td>
-                <td>{p.active ? "yes" : "no"}</td>
+                <td lang="ar">{p.active ? "نعم" : "لا"}</td>
               </tr>
             ))}
           </tbody>

@@ -15,6 +15,17 @@ const ACTION_TONE: Record<string, string> = {
   inventory_reorder: "badge-info",
 };
 
+const ACTION_LABEL: Record<string, string> = {
+  payment_confirmed: "تأكيد الدفع",
+  order_dispatched: "شحن الطلب",
+  dispute_opened: "فتح نزاع",
+  dispute_resolved: "حل النزاع",
+  prompt_updated: "تحديث الرد الآلي",
+  price_quoted: "اقتراح سعر",
+  owner_approval: "موافقة صاحب العمل",
+  inventory_reorder: "إعادة طلب المخزون",
+};
+
 export default async function AuditPage() {
   const { rows, demoMode } = await fetchRows("audit_logs", { order: "created_at" });
 
@@ -29,20 +40,20 @@ export default async function AuditPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <PageHeader
-        title="Audit Log"
-        subtitle="Every owner approval, payment confirmation, and policy change — for accountability and weekly review."
+        title="سجل المراجعة"
+        subtitle="كل موافقة من صاحب العمل وتأكيد دفع وتغيير في السياسة — للمساءلة والمراجعة الأسبوعية."
       />
       <DemoBanner demoMode={demoMode} />
 
       <div className="flex flex-col gap-4">
         {Array.from(groups.entries()).map(([day, items]) => (
           <div key={day} className="card">
-            <SectionTitle action={<span className="muted">{items.length} events</span>}>{day}</SectionTitle>
+            <SectionTitle action={<span className="muted" lang="ar">{items.length} حدث</span>}>{day}</SectionTitle>
             <ul className="flex flex-col gap-1.5">
               {items.map((r) => (
                 <li key={r.id as string} className="flex items-start gap-3 text-sm">
-                  <span className={clsx("badge shrink-0", ACTION_TONE[r.action as string] ?? "badge-neutral")}>
-                    {(r.action as string).replace(/_/g, " ")}
+                  <span className={clsx("badge shrink-0", ACTION_TONE[r.action as string] ?? "badge-neutral")} lang="ar">
+                    {ACTION_LABEL[r.action as string] ?? (r.action as string).replace(/_/g, " ")}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div>
@@ -50,7 +61,7 @@ export default async function AuditPage() {
                       <span className="font-mono text-xs">{(r.entity_id as string)}</span>
                     </div>
                     <div className="text-xs text-gray-500">
-                      {(r.user_id as string) ?? "system"} · {formatDate(r.created_at as string)}
+                      {(r.user_id as string) ?? "النظام"} · {formatDate(r.created_at as string)}
                     </div>
                   </div>
                 </li>

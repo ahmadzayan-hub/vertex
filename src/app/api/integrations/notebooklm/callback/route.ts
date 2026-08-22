@@ -19,14 +19,14 @@ export async function GET(req: NextRequest) {
   const params = req.nextUrl.searchParams;
   const error = params.get("error");
   if (error) {
-    clearState();
+    await clearState();
     return back(req, error === "access_denied" ? "denied" : "error");
   }
 
   const code = params.get("code");
   const returnedState = params.get("state");
-  const expectedState = readState();
-  clearState();
+  const expectedState = await readState();
+  await clearState();
 
   if (!returnedState || !expectedState || returnedState !== expectedState) {
     return back(req, "state_mismatch");
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const tokens = await exchangeCodeForTokens(config, code);
-    saveTokens(tokens);
+    await saveTokens(tokens);
     return back(req, "connected");
   } catch {
     return back(req, "exchange_failed");

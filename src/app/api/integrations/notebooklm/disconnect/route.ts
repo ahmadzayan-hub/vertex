@@ -9,11 +9,11 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-  const tokens = readTokens();
+  const tokens = await readTokens();
   if (tokens) {
     await revokeToken(tokens.refresh_token ?? tokens.access_token);
   }
-  clearTokens();
+  await clearTokens();
   return NextResponse.redirect(
     new URL("/integrations?notebooklm=disconnected", req.nextUrl.origin),
     { status: 303 }

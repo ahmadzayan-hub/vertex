@@ -81,94 +81,94 @@ export default function IntakePage() {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <h1 className="mb-1 text-xl font-semibold">New Conversation</h1>
-      <p className="mb-4 text-sm text-gray-500">
-        Paste the customer message and known facts. The agent drafts a reply — you approve before sending.
+      <h1 className="mb-1 text-xl font-semibold" lang="ar">محادثة جديدة</h1>
+      <p className="mb-4 text-sm text-gray-500" lang="ar">
+        الصق رسالة العميل والمعلومات المعروفة. يصيغ النظام رداً مقترحاً — تعتمده أنت قبل الإرسال.
       </p>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="card flex flex-col gap-3">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="label">Customer name (display)</label>
-              <input className="input" value={form.customerName} onChange={(e) => set("customerName", e.target.value)} />
+              <label htmlFor="intake-name" className="label" lang="ar">اسم العميل</label>
+              <input id="intake-name" className="input" value={form.customerName} onChange={(e) => set("customerName", e.target.value)} />
             </div>
             <div>
-              <label className="label">Platform</label>
-              <select className="input" value={form.platform} onChange={(e) => set("platform", e.target.value as Platform)}>
+              <label htmlFor="intake-platform" className="label" lang="ar">المنصة</label>
+              <select id="intake-platform" className="input" value={form.platform} onChange={(e) => set("platform", e.target.value as Platform)}>
                 <option value="instagram">Instagram</option>
                 <option value="whatsapp">WhatsApp</option>
                 <option value="tiktok">TikTok</option>
                 <option value="meta_ads">Meta Ads</option>
-                <option value="comment">Comment</option>
-                <option value="other">Other</option>
+                <option value="comment">تعليق</option>
+                <option value="other">أخرى</option>
               </select>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="label">Language</label>
-              <select className="input" value={form.language} onChange={(e) => set("language", e.target.value as Language)}>
+              <label htmlFor="intake-language" className="label" lang="ar">لغة الرسالة</label>
+              <select id="intake-language" className="input" value={form.language} onChange={(e) => set("language", e.target.value as Language)}>
                 <option value="en">English</option>
-                <option value="ar">Arabic</option>
-                <option value="mixed">Mixed</option>
+                <option value="ar">عربي</option>
+                <option value="mixed">مختلط</option>
               </select>
             </div>
             <div>
-              <label className="label">Emirate (if known)</label>
-              <input className="input" value={form.emirate} onChange={(e) => set("emirate", e.target.value)} placeholder="Dubai / Sharjah / Al Ain…" />
+              <label htmlFor="intake-emirate" className="label" lang="ar">الإمارة (إن عُرفت)</label>
+              <input id="intake-emirate" className="input" value={form.emirate} onChange={(e) => set("emirate", e.target.value)} placeholder="دبي / الشارقة / العين…" />
             </div>
           </div>
 
           <div>
-            <label className="label">Customer message</label>
-            <textarea className="input min-h-[120px]" value={form.message} onChange={(e) => set("message", e.target.value)} placeholder="Paste the DM / WhatsApp message…" />
+            <label htmlFor="intake-message" className="label" lang="ar">رسالة العميل</label>
+            <textarea id="intake-message" className="input min-h-[120px]" value={form.message} onChange={(e) => set("message", e.target.value)} placeholder="الصق رسالة الواتساب أو الدايركت هنا…" />
             {privacyWarning && (
-              <p className="mt-1 text-xs text-red-700">
-                ⚠ This message appears to contain a phone number or address. Keep private data out of any public reply.
+              <p className="mt-1 text-xs text-red-700" lang="ar">
+                تبدو الرسالة تحتوي على رقم هاتف أو عنوان. لا تدرج البيانات الخاصة في أي رد علني.
               </p>
             )}
           </div>
 
           <div>
-            <label className="label">Product / ad shown (optional)</label>
-            <input className="input" value={form.productShown} onChange={(e) => set("productShown", e.target.value)} />
+            <label htmlFor="intake-product" className="label" lang="ar">المنتج / الإعلان المعروض (اختياري)</label>
+            <input id="intake-product" className="input" value={form.productShown} onChange={(e) => set("productShown", e.target.value)} />
           </div>
 
           <div>
-            <label className="label">Screenshot / product photo (optional)</label>
-            <input type="file" accept="image/*" onChange={onFile} className="text-sm" />
+            <label htmlFor="intake-image" className="label" lang="ar">لقطة شاشة / صورة المنتج (اختياري)</label>
+            <input id="intake-image" type="file" accept="image/*" onChange={onFile} className="text-sm" />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="label">Known price (AED)</label>
-              <input className="input" value={form.knownPrice} onChange={(e) => set("knownPrice", e.target.value)} />
+              <label htmlFor="intake-price" className="label" lang="ar">السعر المعروف (د.إ)</label>
+              <input id="intake-price" className="input" value={form.knownPrice} onChange={(e) => set("knownPrice", e.target.value)} />
             </div>
             <div>
-              <label className="label">Known delivery (AED)</label>
-              <input className="input" value={form.knownDelivery} onChange={(e) => set("knownDelivery", e.target.value)} />
+              <label htmlFor="intake-delivery" className="label" lang="ar">تكلفة التوصيل المعروفة (د.إ)</label>
+              <input id="intake-delivery" className="input" value={form.knownDelivery} onChange={(e) => set("knownDelivery", e.target.value)} />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <label className="flex items-center gap-2"><input type="checkbox" checked={form.stockAvailable} onChange={(e) => set("stockAvailable", e.target.checked)} /> Stock confirmed available</label>
-            <label className="flex items-center gap-2"><input type="checkbox" checked={form.courierConfirmed} onChange={(e) => set("courierConfirmed", e.target.checked)} /> Courier cost confirmed</label>
-            <label className="flex items-center gap-2"><input type="checkbox" checked={form.vatApplicable} onChange={(e) => set("vatApplicable", e.target.checked)} /> VAT applicable</label>
+            <label className="flex items-center gap-2" lang="ar"><input type="checkbox" checked={form.stockAvailable} onChange={(e) => set("stockAvailable", e.target.checked)} /> المخزون متاح</label>
+            <label className="flex items-center gap-2" lang="ar"><input type="checkbox" checked={form.courierConfirmed} onChange={(e) => set("courierConfirmed", e.target.checked)} /> تكلفة الشحن مؤكدة</label>
+            <label className="flex items-center gap-2" lang="ar"><input type="checkbox" checked={form.vatApplicable} onChange={(e) => set("vatApplicable", e.target.checked)} /> ضريبة القيمة المضافة</label>
             <div>
-              <label className="label">Payment status</label>
-              <select className="input" value={form.paymentStatus} onChange={(e) => set("paymentStatus", e.target.value)}>
-                <option value="none">None</option>
-                <option value="link_sent">Link sent</option>
-                <option value="needs_verification">Needs verification</option>
-                <option value="confirmed">Confirmed</option>
+              <label htmlFor="intake-payment" className="label" lang="ar">حالة الدفع</label>
+              <select id="intake-payment" className="input" value={form.paymentStatus} onChange={(e) => set("paymentStatus", e.target.value)}>
+                <option value="none">لا شيء</option>
+                <option value="link_sent">تم إرسال الرابط</option>
+                <option value="needs_verification">بانتظار التحقق</option>
+                <option value="confirmed">مؤكد</option>
               </select>
             </div>
           </div>
 
-          <button className="btn btn-primary self-start" onClick={analyze} disabled={loading || !form.message}>
-            {loading ? "Analyzing…" : "Analyze & draft reply"}
+          <button className="btn btn-primary self-start" onClick={analyze} disabled={loading || !form.message} lang="ar">
+            {loading ? "جارٍ التحليل…" : "تحليل وصياغة الرد"}
           </button>
           {error && <p className="text-sm text-red-700">{error}</p>}
         </div>
@@ -177,8 +177,8 @@ export default function IntakePage() {
           {result ? (
             <AnalysisPanel result={result} />
           ) : (
-            <div className="card text-sm text-gray-500">
-              The structured analysis, guardrail checks, and a ready-to-send reply will appear here after you analyze.
+            <div className="card text-sm text-gray-500" lang="ar">
+              بعد التحليل ستظهر هنا نتائج التحليل المنظم وفحوصات الضمانات والرد الجاهز للإرسال.
             </div>
           )}
         </div>

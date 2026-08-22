@@ -84,11 +84,11 @@ export function conversionFunnel(conversations: Conversation[], orders: Order[])
   const paid = orders.filter((o) => o.payment_status === "confirmed").length;
   const delivered = orders.filter((o) => o.order_status === "delivered").length;
   return [
-    { stage: "All leads", value: total },
-    { stage: "Asked price", value: price + warm + hot },
-    { stage: "Hot lead", value: hot + paid },
-    { stage: "Paid", value: paid },
-    { stage: "Delivered", value: delivered },
+    { stage: "جميع العملاء", value: total },
+    { stage: "استفسار سعر", value: price + warm + hot },
+    { stage: "عميل ساخن", value: hot + paid },
+    { stage: "مدفوع", value: paid },
+    { stage: "تم التسليم", value: delivered },
   ];
 }
 
@@ -148,8 +148,8 @@ export function buildAttentionQueue(args: {
       out.push({
         id: `dispute-${d.id}`,
         severity: "high",
-        title: `Dispute: ${(d.reason as string).replace(/_/g, " ")}`,
-        detail: `${d.customer_name} — order ${d.order_id}`,
+        title: `نزاع: ${(d.reason as string).replace(/_/g, " ")}`,
+        detail: `${d.customer_name} — طلب ${d.order_id}`,
         href: `/payments`,
       });
     }
@@ -160,8 +160,8 @@ export function buildAttentionQueue(args: {
       out.push({
         id: `pay-${p.id}`,
         severity: "high",
-        title: `Verify payment — AED ${p.amount_expected}`,
-        detail: `${p.customer_name} · ref ${p.reference}`,
+        title: `تحقق من الدفع — د.إ ${p.amount_expected}`,
+        detail: `${p.customer_name} · مرجع ${p.reference}`,
         href: `/payments`,
       });
     }
@@ -172,7 +172,7 @@ export function buildAttentionQueue(args: {
       out.push({
         id: `qc-${o.id}`,
         severity: "medium",
-        title: `Run QC — ${o.product_summary}`,
+        title: `مراجعة جودة — ${o.product_summary}`,
         detail: `${o.customer_name} · ${o.delivery_area}`,
         href: `/orders`,
       });
@@ -184,8 +184,8 @@ export function buildAttentionQueue(args: {
       out.push({
         id: `hot-${c.id}`,
         severity: "medium",
-        title: `Hot lead — draft reply`,
-        detail: `${(c as Record<string, unknown>).customer_name} on ${c.platform}`,
+        title: `عميل ساخن — صِغ رداً`,
+        detail: `${(c as Record<string, unknown>).customer_name} عبر ${c.platform}`,
         href: `/inbox`,
       });
     }
@@ -198,16 +198,16 @@ export function buildAttentionQueue(args: {
       out.push({
         id: `stock-out-${inv.id}`,
         severity: "high",
-        title: `Out of stock — ${inv.product_name} (${inv.colour})`,
-        detail: `Reorder via ${inv.supplier_source ?? "supplier"}`,
+        title: `نفد المخزون — ${inv.product_name} (${inv.colour})`,
+        detail: `أعد الطلب عبر ${inv.supplier_source ?? "المورّد"}`,
         href: `/inventory`,
       });
     } else if (daily > 0 && qty / daily <= 4) {
       out.push({
         id: `stock-low-${inv.id}`,
         severity: "medium",
-        title: `Low stock — ${inv.product_name} (${inv.colour})`,
-        detail: `~${Math.floor(qty / daily)} days left at current velocity`,
+        title: `مخزون منخفض — ${inv.product_name} (${inv.colour})`,
+        detail: `~${Math.floor(qty / daily)} يوم بالوتيرة الحالية`,
         href: `/inventory`,
       });
     }

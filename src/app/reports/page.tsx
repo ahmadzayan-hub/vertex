@@ -1,5 +1,5 @@
 import { fetchKpis, fetchRows, formatAed } from "@/lib/data";
-import { DemoBanner, PageHeader, Kpi, SectionTitle } from "@/components/ui";
+import { DemoBanner, PageHeader, Kpi, SectionTitle, Stat } from "@/components/ui";
 import { OrdersBarChart, RevenueAreaChart, FunnelBarChart, TopProductsChart } from "@/components/LazyCharts";
 import { revenueByDay, ordersByDay, conversionFunnel, topProducts } from "@/lib/analytics";
 import { buildVatCsv, type OrderForTax } from "@/lib/growth";
@@ -9,10 +9,10 @@ import VatExportButton from "./VatExportButton";
 export const dynamic = "force-dynamic";
 
 const WEEKLY_SECTIONS = [
-  "Best selling products", "Best selling colours", "Best converting scripts",
-  "Worst converting scripts", "Courier SLA review", "Supplier risk review",
-  "Pricing recommendation", "Inventory reorder recommendation",
-  "Content recommendation", "Repeat purchase plan",
+  "أفضل المنتجات مبيعاً", "أفضل الألوان مبيعاً", "أفضل نصوص التحويل",
+  "أسوأ نصوص التحويل", "مراجعة مستوى خدمة الشحن", "مراجعة مخاطر الموردين",
+  "توصية بالتسعير", "توصية بإعادة طلب المخزون",
+  "توصية بالمحتوى", "خطة الشراء المتكرر",
 ];
 
 export default async function ReportsPage() {
@@ -48,72 +48,72 @@ export default async function ReportsPage() {
   return (
     <div className="mx-auto max-w-7xl">
       <PageHeader
-        title="Reports &amp; Reviews"
-        subtitle="The improvement loop. Use the daily review every evening and the weekly review every week — without it, the system repeats mistakes faster."
+        title="التقارير"
+        subtitle="دورة التحسين. استخدم المراجعة اليومية كل مساء والمراجعة الأسبوعية كل أسبوع — بدونها يتكرر الخطأ بشكل أسرع."
         action={<VatExportButton csv={csv} />}
       />
       <DemoBanner demoMode={demoMode} />
 
       <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-5">
-        <Kpi label="Revenue 30d" value={formatAed(kpis.revenueAed30d)} />
-        <Kpi label="Revenue 7d" value={formatAed(kpis.revenueAed7d)} />
-        <Kpi label="Paid orders" value={kpis.paidOrders} />
-        <Kpi label="Lead → payment" value={`${kpis.leadToPayment}%`} />
-        <Kpi label="Open disputes" value={kpis.openDisputes} />
+        <Kpi label="إيراد 30 يوم" value={formatAed(kpis.revenueAed30d)} />
+        <Kpi label="إيراد 7 أيام" value={formatAed(kpis.revenueAed7d)} />
+        <Kpi label="طلبات مدفوعة" value={kpis.paidOrders} />
+        <Kpi label="تحويل إلى دفع" value={`${kpis.leadToPayment}%`} />
+        <Kpi label="نزاعات مفتوحة" value={kpis.openDisputes} />
       </div>
 
       <div className="mb-4 grid gap-4 lg:grid-cols-3">
         <div className="card lg:col-span-2">
-          <SectionTitle>Revenue (30 days)</SectionTitle>
+          <SectionTitle>الإيراد (30 يوم)</SectionTitle>
           <RevenueAreaChart data={revenue} />
         </div>
         <div className="card">
-          <SectionTitle>Conversion funnel</SectionTitle>
+          <SectionTitle>قمع التحويل</SectionTitle>
           <FunnelBarChart data={funnel} />
         </div>
       </div>
 
       <div className="mb-4 grid gap-4 lg:grid-cols-2">
         <div className="card">
-          <SectionTitle>Orders per day</SectionTitle>
+          <SectionTitle>الطلبات اليومية</SectionTitle>
           <OrdersBarChart data={ordersTrend} />
         </div>
         <div className="card">
-          <SectionTitle>Top products (paid)</SectionTitle>
+          <SectionTitle>أفضل المنتجات (مدفوع)</SectionTitle>
           <TopProductsChart data={top} />
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="card">
-          <SectionTitle action={<span className="muted text-xs">today, live</span>}>
-            Daily operating review
+          <SectionTitle action={<span className="muted text-xs" lang="ar">اليوم، مباشر</span>}>
+            المراجعة اليومية
           </SectionTitle>
-          <dl className="mb-3 grid grid-cols-2 gap-2 text-sm">
-            <Stat k="Conversations" v={metrics.todayConversations} />
-            <Stat k="Hot leads" v={metrics.todayHotLeads} />
-            <Stat k="Orders" v={metrics.todayOrders} />
-            <Stat k="Paid (AED)" v={formatAed(metrics.todayPaidAed)} />
-            <Stat k="Pending (AED)" v={formatAed(metrics.todayPendingAed)} />
-            <Stat k="Avg order (AED)" v={formatAed(metrics.avgOrderAed)} />
-            <Stat k="Conversion" v={`${metrics.conversionPercent}%`} />
-            <Stat k="Complaints" v={metrics.todayComplaints} />
-          </dl>
-          <h3 className="h2 mt-3 mb-1">Narrative — English</h3>
-          <pre className="whitespace-pre-wrap rounded-xl bg-gray-50 p-3 text-sm">{narrative.en}</pre>
+          <div className="mb-3 grid grid-cols-2 gap-2">
+            <Stat label="محادثات"         value={metrics.todayConversations} />
+            <Stat label="عملاء ساخنون"    value={metrics.todayHotLeads} />
+            <Stat label="طلبات"           value={metrics.todayOrders} />
+            <Stat label="مدفوع (د.إ)"     value={formatAed(metrics.todayPaidAed)} />
+            <Stat label="معلق (د.إ)"      value={formatAed(metrics.todayPendingAed)} />
+            <Stat label="متوسط الطلب (د.إ)" value={formatAed(metrics.avgOrderAed)} />
+            <Stat label="نسبة التحويل"    value={`${metrics.conversionPercent}%`} />
+            <Stat label="شكاوى"           value={metrics.todayComplaints} />
+          </div>
+          <h3 className="h2 mt-3 mb-1">السرد — English</h3>
+          <pre className="whitespace-pre-wrap rounded-xl bg-slate-50 p-3 text-sm text-slate-700">{narrative.en}</pre>
           <h3 className="h2 mt-3 mb-1">السرد — العربية</h3>
-          <pre className="rtl whitespace-pre-wrap rounded-xl bg-gray-50 p-3 text-sm" dir="rtl">{narrative.ar}</pre>
-          <p className="mt-2 text-xs text-gray-500">
-            Wire your AI provider (Settings) to polish this narrative every evening from the day&apos;s conversations.
+          <pre className="rtl whitespace-pre-wrap rounded-xl bg-slate-50 p-3 text-sm text-slate-700" dir="rtl">{narrative.ar}</pre>
+          <p className="mt-2 text-xs text-slate-500" lang="ar">
+            اربط مزوّد الذكاء الاصطناعي (الإعدادات) لصياغة هذا السرد كل مساء من محادثات اليوم.
           </p>
         </div>
         <div className="card">
-          <SectionTitle>Weekly improvement loop</SectionTitle>
-          <ul className="list-disc pl-5 text-sm text-gray-700">
+          <SectionTitle>دورة التحسين الأسبوعية</SectionTitle>
+          <ul className="list-disc pr-5 text-sm text-slate-700 space-y-1" dir="rtl" lang="ar">
             {WEEKLY_SECTIONS.map((s) => <li key={s}>{s}</li>)}
           </ul>
-          <p className="mt-2 text-xs text-gray-500">
-            Run every Sunday. The VAT-ready CSV above feeds the monthly tax report.
+          <p className="mt-3 text-xs text-slate-500" lang="ar">
+            تُنجز كل أحد. ملف CSV الجاهز للضريبة أعلاه يُغذّي التقرير الشهري.
           </p>
         </div>
       </div>
@@ -121,11 +121,3 @@ export default async function ReportsPage() {
   );
 }
 
-function Stat({ k, v }: { k: string; v: string | number }) {
-  return (
-    <div className="rounded-lg bg-gray-50 px-3 py-2">
-      <div className="text-[10px] uppercase tracking-wide text-gray-400">{k}</div>
-      <div className="text-sm font-semibold">{v}</div>
-    </div>
-  );
-}

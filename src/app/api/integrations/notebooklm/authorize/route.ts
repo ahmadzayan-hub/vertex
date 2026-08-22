@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
   }
 
   const state = randomBytes(24).toString("base64url");
-  saveState(state);
+  await saveState(state);
 
   return NextResponse.redirect(buildAuthUrl(config, state));
 }

@@ -1,38 +1,42 @@
 {
-  "name": "beyond-style-uae",
+  "name": "masaar",
   "version": "0.1.0",
   "private": true,
-  "description": "Beyond Style UAE — Customer Conversion & Order Control Agent (human-approved sales operating console)",
+  "description": "مسار — لوحة تحكم مبيعات Beyond Style UAE (نظام تحويل العملاء وإدارة الطلبات بإشراف بشري)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint src --ext .ts,.tsx --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.4",
     "clsx": "^2.1.1",
     "lucide-react": "^0.451.0",
-    "next": "14.2.15",
+    "next": "^16.3.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "recharts": "^2.12.7",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@playwright/test": "^1.62.1",
     "@types/node": "^20.16.10",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.1",
-    "eslint-config-next": "14.2.15",
+    "eslint-config-next": "^15.3.9",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
     "typescript": "^5.6.2",
-    "vitest": "^2.1.2"
+    "vitest": "^3.2.7"
   }
 }

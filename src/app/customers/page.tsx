@@ -39,26 +39,26 @@ export default async function CustomersPage() {
 
   return (
     <div className="mx-auto max-w-7xl">
-      <PageHeader title="Customers" subtitle="Sales-relevant records only — no sensitive profiling, ever." />
+      <PageHeader title="العملاء" subtitle="سجلات المبيعات فقط — لا تنميط حساس أبداً." />
       <DemoBanner demoMode={customersRes.demoMode} />
 
       <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi label="All customers" value={customers.length} />
-        <Kpi label="VIP" value={vipCount} hint="3+ purchases — owner deliveries" />
-        <Kpi label="Repeat" value={repeatCount} hint="2+ purchases" />
-        <Kpi label="Arabic-speaking" value={`${arabicShare}%`} hint="Includes mixed-language" />
+        <Kpi label="إجمالي العملاء" value={customers.length} />
+        <Kpi label="VIP" value={vipCount} hint="3 مشتريات فأكثر — توصيل مباشر" />
+        <Kpi label="متكررون" value={repeatCount} hint="مشترتان فأكثر" />
+        <Kpi label="ناطقون بالعربية" value={`${arabicShare}%`} hint="يشمل اللغة المختلطة" />
       </div>
 
       <div className="card">
-        <SectionTitle action={<span className="muted">Total spend across all customers: <strong>{formatAed(totalSpend)}</strong></span>}>
-          Customer book
+        <SectionTitle action={<span className="muted" lang="ar">إجمالي الإنفاق: <strong>{formatAed(totalSpend)}</strong></span>}>
+          قائمة العملاء
         </SectionTitle>
         <div className="overflow-x-auto">
           <table className="tbl">
             <thead>
               <tr>
-                <th>Name</th><th>Arabic</th><th>Platform</th><th>Lang</th>
-                <th>Segment</th><th>Orders</th><th>Spend (AED)</th><th>Last activity</th>
+                <th>الاسم</th><th>الاسم بالعربي</th><th>المنصة</th><th>اللغة</th>
+                <th>الشريحة</th><th>الطلبات</th><th>الإنفاق (د.إ)</th><th>آخر نشاط</th>
               </tr>
             </thead>
             <tbody>
@@ -70,7 +70,7 @@ export default async function CustomersPage() {
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{c.name_display as string}</span>
                       {c.vip ? <span className="badge badge-vip">VIP</span> : null}
-                      {!c.vip && Number(c.purchase_count) >= 2 ? <span className="badge badge-info">repeat</span> : null}
+                      {!c.vip && Number(c.purchase_count) >= 2 ? <span className="badge badge-info" lang="ar">متكرر</span> : null}
                     </div>
                   </td>
                   <td className="rtl">{(c.name_arabic_verified as string) ?? "—"}</td>

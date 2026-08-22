@@ -7,6 +7,13 @@ type Row = Record<string, unknown>;
 
 const STAGE_OPTIONS = ["all", "hot_lead", "payment_stage", "price_lead", "warm_lead", "cold_lead", "complaint_stage"] as const;
 const TEMP_OPTIONS = ["all", "hot", "warm", "cold"] as const;
+const STAGE_LABEL_CLIENT: Record<string, string> = {
+  all: "جميع المراحل", hot_lead: "ساخن", payment_stage: "مرحلة الدفع",
+  price_lead: "استفسار سعر", warm_lead: "دافئ", cold_lead: "بارد", complaint_stage: "شكوى",
+};
+const TEMP_LABEL_CLIENT: Record<string, string> = {
+  all: "جميع الدرجات", hot: "ساخن", warm: "دافئ", cold: "بارد",
+};
 
 export default function InboxClient({
   conversations, aiOutputs, orders, customers,
@@ -87,22 +94,23 @@ export default function InboxClient({
         <div className="border-b border-gray-100 p-3">
           <input
             className="input"
-            placeholder="Search messages / customers…"
+            placeholder="ابحث في الرسائل والعملاء…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            lang="ar"
           />
           <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
             <select className="input !py-1 !text-xs" value={stage} onChange={(e) => setStage(e.target.value as never)}>
-              {STAGE_OPTIONS.map((s) => <option key={s} value={s}>{s === "all" ? "All stages" : s.replace(/_/g, " ")}</option>)}
+              {STAGE_OPTIONS.map((s) => <option key={s} value={s}>{STAGE_LABEL_CLIENT[s] ?? s}</option>)}
             </select>
             <select className="input !py-1 !text-xs" value={temp} onChange={(e) => setTemp(e.target.value as never)}>
-              {TEMP_OPTIONS.map((t) => <option key={t} value={t}>{t === "all" ? "All temps" : t}</option>)}
+              {TEMP_OPTIONS.map((t) => <option key={t} value={t}>{TEMP_LABEL_CLIENT[t] ?? t}</option>)}
             </select>
           </div>
         </div>
         <ul className="flex-1 overflow-y-auto">
           {filtered.length === 0 && (
-            <li className="p-6 text-center text-sm text-gray-400">No conversations match.</li>
+            <li className="p-6 text-center text-sm text-gray-400" lang="ar">لا توجد محادثات مطابقة.</li>
           )}
           {filtered.map((c) => {
             const active = c.id === selected?.id;
@@ -112,7 +120,7 @@ export default function InboxClient({
                   onClick={() => { setSelectedId(c.id as string); setLiveResult(null); setLiveError(null); setApproved(false); }}
                   className={clsx(
                     "flex w-full flex-col gap-1 border-b border-gray-100 px-3 py-2 text-left hover:bg-gray-50",
-                    active && "bg-pink-50/60"
+                    active && "bg-amber-50/60"
                   )}
                 >
                   <div className="flex items-center justify-between gap-2 text-sm">
@@ -138,7 +146,7 @@ export default function InboxClient({
       {/* Right: detail */}
       <div className="flex flex-col gap-4">
         {!selected ? (
-          <div className="card text-sm text-gray-500">Select a conversation to see the AI draft, guardrails, and customer history.</div>
+          <div className="card text-sm text-gray-500" lang="ar">اختر محادثة لعرض مسودة الرد وفحوصات الضمانات وسجل العميل.</div>
         ) : (
           <>
             <div className="card">
@@ -159,18 +167,19 @@ export default function InboxClient({
                 "rounded-xl bg-gray-50 p-3 text-sm",
                 selected.message_language === "ar" && "rtl"
               )}>{selected.message_text as string}</p>
-              <p className="mt-2 text-xs text-gray-500">Intent: {selected.intent as string}</p>
+              <p className="mt-2 text-xs text-gray-500" lang="ar">النية: {selected.intent as string}</p>
             </div>
 
             <div className="card">
               <div className="mb-2 flex items-center justify-between">
-                <h3 className="h2">AI draft reply</h3>
+                <h3 className="h2" lang="ar">مسودة الرد</h3>
                 <button
                   className="btn btn-soft btn-sm"
                   disabled={liveLoading}
                   onClick={runLiveAnalysis}
+                  lang="ar"
                 >
-                  {liveLoading ? "Analyzing…" : "Re-analyze with live AI"}
+                  {liveLoading ? "جارٍ التحليل…" : "تحليل مباشر"}
                 </button>
               </div>
               {liveError && <p className="mb-2 text-xs text-red-700">{liveError}</p>}
@@ -179,39 +188,38 @@ export default function InboxClient({
               ) : aiDraft ? (
                 <CachedDraft aiDraft={aiDraft} approved={approved} setApproved={setApproved} copied={copied} setCopied={setCopied} />
               ) : (
-                <p className="text-sm text-gray-500">
-                  No draft yet. Click <em>Re-analyze with live AI</em> to generate one — works even without an API key
-                  (mock provider returns a safe placeholder).
+                <p className="text-sm text-gray-500" lang="ar">
+                  لا توجد مسودة بعد. اضغط على <em>تحليل مباشر</em> للحصول على رد — يعمل حتى بدون مفتاح API (وضع المحاكاة يُعيد رداً آمناً).
                 </p>
               )}
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="card">
-                <h3 className="h2 mb-2">Customer record</h3>
+                <h3 className="h2 mb-2" lang="ar">بيانات العميل</h3>
                 {customer ? (
                   <dl className="grid grid-cols-1 gap-1 text-sm">
-                    <Row k="Display name" v={(customer.name_display as string) ?? "—"} />
-                    <Row k="Arabic verified" v={(customer.name_arabic_verified as string) ?? "—"} />
-                    <Row k="Language" v={customer.language as string} />
-                    <Row k="Segment" v={customer.segment as string} />
-                    <Row k="Purchases" v={String(customer.purchase_count ?? 0)} />
-                    <Row k="Consent" v={customer.consent_status as string} />
+                    <Row k="الاسم" v={(customer.name_display as string) ?? "—"} />
+                    <Row k="الاسم بالعربي" v={(customer.name_arabic_verified as string) ?? "—"} />
+                    <Row k="اللغة" v={customer.language as string} />
+                    <Row k="الفئة" v={customer.segment as string} />
+                    <Row k="عدد الشراء" v={String(customer.purchase_count ?? 0)} />
+                    <Row k="الموافقة" v={customer.consent_status as string} />
                   </dl>
                 ) : (
-                  <p className="text-sm text-gray-500">No linked customer.</p>
+                  <p className="text-sm text-gray-500" lang="ar">لا يوجد عميل مرتبط.</p>
                 )}
               </div>
               <div className="card">
-                <h3 className="h2 mb-2">Order history</h3>
+                <h3 className="h2 mb-2" lang="ar">سجل الطلبات</h3>
                 {customerOrders.length === 0 ? (
-                  <p className="text-sm text-gray-500">No orders yet for this customer.</p>
+                  <p className="text-sm text-gray-500" lang="ar">لا طلبات لهذا العميل بعد.</p>
                 ) : (
                   <ul className="flex flex-col gap-1.5 text-sm">
                     {customerOrders.slice(0, 4).map((o) => (
                       <li key={o.id as string} className="flex items-center justify-between gap-2 rounded-lg bg-gray-50 px-2 py-1">
                         <span className="truncate">{o.product_summary as string}</span>
-                        <span className="shrink-0 text-xs text-gray-500">AED {String(o.total_amount)} · {o.order_status as string}</span>
+                        <span className="shrink-0 text-xs text-gray-500">د.إ {String(o.total_amount)} · {o.order_status as string}</span>
                       </li>
                     ))}
                   </ul>
@@ -235,23 +243,25 @@ function CachedDraft({
     <div className="flex flex-col gap-2">
       <p className="whitespace-pre-wrap rounded-xl bg-gray-50 p-3 text-sm">{draft}</p>
       <div className="flex items-center justify-between gap-2 text-xs">
-        <span className={clsx("badge", worst === "pass" ? "badge-pass" : worst === "warn" ? "badge-warn" : "badge-fail")}>
-          guardrails {worst}
+        <span className={clsx("badge", worst === "pass" ? "badge-pass" : worst === "warn" ? "badge-warn" : "badge-fail")} lang="ar">
+          الضمانات: {worst === "pass" ? "ناجحة" : worst === "warn" ? "تحذير" : "فشل"}
         </span>
-        <span className="text-gray-400">confidence {Math.round(Number(aiDraft.confidence_score) * 100)}%</span>
+        <span className="text-gray-400" lang="ar">الثقة: {Math.round(Number(aiDraft.confidence_score) * 100)}%</span>
       </div>
       <div className="flex gap-2">
         <button
           className="btn btn-ghost btn-sm"
           onClick={() => { navigator.clipboard.writeText(draft); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
+          lang="ar"
         >
-          {copied ? "Copied ✓" : "Copy"}
+          {copied ? "تم النسخ" : "نسخ"}
         </button>
         <button
           className={clsx("btn btn-sm", approved ? "btn-soft" : "btn-primary")}
           onClick={() => setApproved(true)}
+          lang="ar"
         >
-          {approved ? "Approved ✓" : "Approve to send"}
+          {approved ? "تم الاعتماد" : "اعتماد وإرسال"}
         </button>
       </div>
     </div>
@@ -265,18 +275,18 @@ function LiveAnalysis({ result }: { result: Row }) {
   return (
     <div className="flex flex-col gap-3">
       <p className="whitespace-pre-wrap rounded-xl bg-gray-50 p-3 text-sm">{reply}</p>
-      <div className="text-xs text-gray-500">
-        <strong>Next action:</strong> {analysis?.next_action as string} · <strong>Follow-up:</strong> {analysis?.follow_up_timing as string}
+      <div className="text-xs text-gray-500" lang="ar">
+        <strong>الإجراء التالي:</strong> {analysis?.next_action as string} · <strong>المتابعة:</strong> {analysis?.follow_up_timing as string}
       </div>
       <div className="flex flex-col gap-1 text-xs">
-        <span className={clsx("badge w-fit", guardrails.worstStatus === "pass" ? "badge-pass" : guardrails.worstStatus === "warn" ? "badge-warn" : "badge-fail")}>
-          guardrails {guardrails.worstStatus}
+        <span className={clsx("badge w-fit", guardrails.worstStatus === "pass" ? "badge-pass" : guardrails.worstStatus === "warn" ? "badge-warn" : "badge-fail")} lang="ar">
+          الضمانات: {guardrails.worstStatus === "pass" ? "ناجحة" : guardrails.worstStatus === "warn" ? "تحذير" : "فشل"}
         </span>
         {(guardrails.findings ?? []).map((f, i) => (
           <span key={i} className="text-gray-600">· <strong>{f.code}</strong> {f.message}</span>
         ))}
       </div>
-      <p className="text-[11px] text-gray-400">model: {String(result.provider)} / {String(result.model)}</p>
+      <p className="text-[11px] text-gray-400">النموذج: {String(result.provider)} / {String(result.model)}</p>
     </div>
   );
 }

@@ -41,7 +41,7 @@ export async function fetchRows(table: string, opts: FetchOpts = {}): Promise<Fe
     return { rows, connected: false, demoMode: true };
   }
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     let q = supabase.from(table).select("*").limit(opts.limit ?? 100);
     if (opts.order) q = q.order(opts.order, { ascending: false });
     const { data, error } = await q;
@@ -116,15 +116,15 @@ export async function fetchKpis(): Promise<{ kpis: Kpis; connected: boolean; dem
     return { kpis, connected: false, demoMode: true };
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const [convs, orders, disputes] = await Promise.all([
     supabase.from("conversations").select("stage,lead_temperature,intent,created_at"),
     supabase.from("orders").select("order_status,payment_status,total_amount,created_at"),
     supabase.from("disputes").select("status"),
   ]);
-  const c = convs.data ?? [];
+  const c = (convs.data ?? []) as Array<Record<string, unknown>>;
   const o = (orders.data ?? []) as Array<Record<string, unknown>>;
-  const d = disputes.data ?? [];
+  const d = (disputes.data ?? []) as Array<Record<string, unknown>>;
   const paid = o.filter((x) => x.payment_status === "confirmed" || x.order_status === "paid");
   const sumTotal = (rows: Array<Record<string, unknown>>) =>
     rows.reduce((s, r) => s + (Number(r.total_amount) || 0), 0);
@@ -174,11 +174,11 @@ export function formatRelative(iso: string | null | undefined): string {
   const d = new Date(iso);
   const diff = Date.now() - d.getTime();
   const m = Math.floor(diff / 60_000);
-  if (m < 1) return "just now";
-  if (m < 60) return `${m}m ago`;
+  if (m < 1) return "الآن";
+  if (m < 60) return `منذ ${m}د`;
   const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
+  if (h < 24) return `منذ ${h}س`;
   const days = Math.floor(h / 24);
-  if (days < 30) return `${days}d ago`;
-  return d.toLocaleDateString("en-AE", { day: "2-digit", month: "short" });
+  if (days < 30) return `منذ ${days}ي`;
+  return d.toLocaleDateString("ar-AE", { day: "2-digit", month: "short" });
 }

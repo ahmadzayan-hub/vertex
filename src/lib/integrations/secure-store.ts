@@ -64,16 +64,18 @@ function baseCookieOptions() {
 }
 
 /** Persist tokens (encrypted) in an httpOnly cookie. */
-export function saveTokens(tokens: OAuthTokens): void {
-  cookies().set(TOKEN_COOKIE, encrypt(JSON.stringify(tokens)), {
+export async function saveTokens(tokens: OAuthTokens): Promise<void> {
+  const jar = await cookies();
+  jar.set(TOKEN_COOKIE, encrypt(JSON.stringify(tokens)), {
     ...baseCookieOptions(),
     maxAge: COOKIE_MAX_AGE,
   });
 }
 
 /** Read and decrypt stored tokens, or null when disconnected / invalid. */
-export function readTokens(): OAuthTokens | null {
-  const raw = cookies().get(TOKEN_COOKIE)?.value;
+export async function readTokens(): Promise<OAuthTokens | null> {
+  const jar = await cookies();
+  const raw = jar.get(TOKEN_COOKIE)?.value;
   if (!raw) return null;
   const json = decrypt(raw);
   if (!json) return null;
@@ -85,21 +87,25 @@ export function readTokens(): OAuthTokens | null {
 }
 
 /** Remove stored tokens. */
-export function clearTokens(): void {
-  cookies().set(TOKEN_COOKIE, "", { ...baseCookieOptions(), maxAge: 0 });
+export async function clearTokens(): Promise<void> {
+  const jar = await cookies();
+  jar.set(TOKEN_COOKIE, "", { ...baseCookieOptions(), maxAge: 0 });
 }
 
 /** Store the anti-CSRF state for the duration of the consent round-trip. */
-export function saveState(state: string): void {
-  cookies().set(STATE_COOKIE, state, { ...baseCookieOptions(), maxAge: 600 }); // 10 min
+export async function saveState(state: string): Promise<void> {
+  const jar = await cookies();
+  jar.set(STATE_COOKIE, state, { ...baseCookieOptions(), maxAge: 600 }); // 10 min
 }
 
-export function readState(): string | null {
-  return cookies().get(STATE_COOKIE)?.value ?? null;
+export async function readState(): Promise<string | null> {
+  const jar = await cookies();
+  return jar.get(STATE_COOKIE)?.value ?? null;
 }
 
-export function clearState(): void {
-  cookies().set(STATE_COOKIE, "", { ...baseCookieOptions(), maxAge: 0 });
+export async function clearState(): Promise<void> {
+  const jar = await cookies();
+  jar.set(STATE_COOKIE, "", { ...baseCookieOptions(), maxAge: 0 });
 }
 
 function b64url(buf: Buffer): string {

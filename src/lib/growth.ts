@@ -33,7 +33,7 @@ export function computeVelocity(input: VelocityInput): VelocityResult {
       status: "out",
       reorderSuggested: true,
       suggestedReorderQty: Math.max(1, Math.ceil(input.dailySalesRate * lead * 2)),
-      label: "Out of stock — reorder now.",
+      label: "نفد المخزون — أعد الطلب الآن.",
     };
   }
   if (input.dailySalesRate <= 0) {
@@ -42,7 +42,7 @@ export function computeVelocity(input: VelocityInput): VelocityResult {
       status: "ok",
       reorderSuggested: false,
       suggestedReorderQty: 0,
-      label: "No recent sales velocity.",
+      label: "لا توجد حركة مبيعات حديثة.",
     };
   }
   const days = Math.floor(input.quantityAvailable / input.dailySalesRate);
@@ -63,8 +63,8 @@ export function computeVelocity(input: VelocityInput): VelocityResult {
     suggestedReorderQty,
     label:
       status === "ok"
-        ? `~${days} days of stock left.`
-        : `Out of stock in ~${days} days — reorder ${suggestedReorderQty} units.`,
+        ? `متبقٍّ ~${days} يوم من المخزون.`
+        : `ينفد المخزون في ~${days} يوم — أعد طلب ${suggestedReorderQty} وحدة.`,
   };
 }
 
@@ -85,8 +85,8 @@ export function evaluateVip(purchaseCount: number): VipResult {
       isVip: true,
       tier: "vip",
       loyaltyMention: {
-        en: "As a valued repeat customer, we've added a small thank-you with your order 🤍",
-        ar: "كونك من عملائنا الدائمين، أضفنا لمسة شكر بسيطة مع طلبك 🤍",
+        en: "As a valued repeat customer, we've added a small thank-you with your order.",
+        ar: "كونك من عملائنا الدائمين، أضفنا لمسة شكر بسيطة مع طلبك.",
       },
     };
   }
@@ -95,8 +95,8 @@ export function evaluateVip(purchaseCount: number): VipResult {
       isVip: false,
       tier: "repeat",
       loyaltyMention: {
-        en: "Lovely to have you back 🤍",
-        ar: "سعداء بعودتك 🤍",
+        en: "Lovely to have you back.",
+        ar: "سعداء بعودتك.",
       },
     };
   }
@@ -152,36 +152,36 @@ export function isOrderLocked(disputes: DisputeLike[]): boolean {
 // Standard resolution templates (bilingual). Never admit liability before review.
 export const RESOLUTION_TEMPLATES: Record<DisputeReason, { en: string; ar: string }> = {
   damaged: {
-    en: "We're sorry to hear this 🤍 Could you please share clear photos of the item so our team can review it right away?",
-    ar: "نعتذر لسماع ذلك 🤍 ممكن ترسلين صور واضحة للقطعة حتى يراجعها فريقنا فوراً؟",
+    en: "We're sorry to hear this. Could you please share clear photos of the item so our team can review it right away?",
+    ar: "نعتذر لسماع ذلك. ممكن ترسلين صور واضحة للقطعة حتى يراجعها فريقنا فوراً؟",
   },
   wrong_item: {
-    en: "Apologies for the mix-up 🤍 Please share a photo of what you received so we can check and make it right.",
-    ar: "نعتذر عن الخطأ 🤍 ممكن صورة لما استلمتيه حتى نتحقق ونصحح الوضع.",
+    en: "Apologies for the mix-up. Please share a photo of what you received so we can check and make it right.",
+    ar: "نعتذر عن الخطأ. ممكن صورة لما استلمتيه حتى نتحقق ونصحح الوضع.",
   },
   delivery_delay: {
-    en: "Thank you for your patience 🤍 We're checking with the courier now and will update you shortly.",
-    ar: "شاكرين سعة صدرك 🤍 نتواصل مع شركة التوصيل الآن ونحدثك قريباً.",
+    en: "Thank you for your patience. We're checking with the courier now and will update you shortly.",
+    ar: "شاكرين سعة صدرك. نتواصل مع شركة التوصيل الآن ونحدثك قريباً.",
   },
   payment_issue: {
-    en: "Let's sort this out 🤍 Could you share the payment reference so we can verify it?",
-    ar: "بنحل الموضوع 🤍 ممكن مرجع الدفع حتى نتأكد منه؟",
+    en: "Let's sort this out. Could you share the payment reference so we can verify it?",
+    ar: "بنحل الموضوع. ممكن مرجع الدفع حتى نتأكد منه؟",
   },
   custom_dispute: {
-    en: "We want you to be happy with your custom piece 🤍 Let us review the original request together.",
-    ar: "يهمنا رضاك عن التصميم الخاص 🤍 خلينا نراجع الطلب الأصلي سوا.",
+    en: "We want you to be happy with your custom piece. Let us review the original request together.",
+    ar: "يهمنا رضاك عن التصميم الخاص. خلينا نراجع الطلب الأصلي سوا.",
   },
   material_claim: {
     en: "Our pieces are fashion accessories (gold/silver-tone, plated). We'll review your concern and respond.",
     ar: "قطعنا إكسسوارات أزياء (طلاء ذهبي/فضي). راح نراجع ملاحظتك ونرد عليك.",
   },
   courier_failure: {
-    en: "Sorry for the courier issue 🤍 We're escalating with them and will arrange a solution.",
-    ar: "نعتذر عن مشكلة التوصيل 🤍 نصعّد معهم ونرتب حل مناسب.",
+    en: "Sorry for the courier issue. We're escalating with them and will arrange a solution.",
+    ar: "نعتذر عن مشكلة التوصيل. نصعّد معهم ونرتب حل مناسب.",
   },
   refund_request: {
-    en: "We've noted your request 🤍 Refunds/exchanges are reviewed individually — our team will get back to you.",
-    ar: "سجلنا طلبك 🤍 الاسترجاع/الاستبدال يُراجع حالة بحالة — فريقنا راح يتواصل معك.",
+    en: "We've noted your request. Refunds/exchanges are reviewed individually — our team will get back to you.",
+    ar: "سجلنا طلبك. الاسترجاع/الاستبدال يُراجع حالة بحالة — فريقنا راح يتواصل معك.",
   },
 };
 
@@ -207,11 +207,11 @@ export function expectedDeliveryWindow(
   const start = addDays(from, buffer.minDays);
   const end = addDays(from, buffer.maxDays);
   const requiresCourierConfirm = key !== "dubai";
-  const suffix = requiresCourierConfirm ? " (subject to courier confirmation)" : "";
+  const suffix = requiresCourierConfirm ? " (بانتظار تأكيد شركة التوصيل)" : "";
   return {
     from: start,
     to: end,
-    label: `Expected delivery ${fmt(start)}–${fmt(end)}${suffix}`,
+    label: `موعد التسليم المتوقع ${fmt(start)}–${fmt(end)}${suffix}`,
     requiresCourierConfirm,
   };
 }

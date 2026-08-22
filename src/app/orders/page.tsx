@@ -5,14 +5,14 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 const STAGES = [
-  { key: "draft", label: "Draft" },
-  { key: "awaiting_payment", label: "Awaiting payment" },
-  { key: "paid", label: "Paid" },
-  { key: "qc", label: "Quality check" },
-  { key: "dispatched", label: "Dispatched" },
-  { key: "delivered", label: "Delivered" },
-  { key: "complaint", label: "Complaint" },
-  { key: "cancelled", label: "Cancelled" },
+  { key: "draft", label: "مسودة" },
+  { key: "awaiting_payment", label: "بانتظار الدفع" },
+  { key: "paid", label: "مدفوع" },
+  { key: "qc", label: "فحص جودة" },
+  { key: "dispatched", label: "تم الشحن" },
+  { key: "delivered", label: "تم التوصيل" },
+  { key: "complaint", label: "شكوى" },
+  { key: "cancelled", label: "ملغى" },
 ] as const;
 
 export default async function OrdersPage() {
@@ -38,22 +38,22 @@ export default async function OrdersPage() {
   return (
     <div className="mx-auto max-w-7xl">
       <PageHeader
-        title="Orders"
-        subtitle="Order lifecycle from draft to delivered. Dispatch is blocked until payment is confirmed and QC is signed off."
+        title="الطلبات"
+        subtitle="دورة حياة الطلب من المسودة حتى التوصيل. الشحن مقيّد حتى تأكيد الدفع وإتمام فحص الجودة."
       />
       <DemoBanner demoMode={demoMode} />
 
       <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-5">
-        <Kpi label="Total order value" value={formatAed(totals.totalAed)} />
-        <Kpi label="Paid" value={formatAed(totals.paidAed)} />
-        <Kpi label="Awaiting payment" value={formatAed(totals.pendingAed)} />
-        <Kpi label="In QC" value={totals.qc} />
-        <Kpi label="Delivered" value={totals.delivered} />
+        <Kpi label="إجمالي قيمة الطلبات" value={formatAed(totals.totalAed)} />
+        <Kpi label="مدفوع" value={formatAed(totals.paidAed)} />
+        <Kpi label="بانتظار الدفع" value={formatAed(totals.pendingAed)} />
+        <Kpi label="في فحص الجودة" value={totals.qc} />
+        <Kpi label="تم التوصيل" value={totals.delivered} />
       </div>
 
       {/* Kanban board */}
-      <SectionTitle action={<Link href="/inbox" className="muted text-xs underline">Customer Inbox →</Link>}>
-        Order pipeline
+      <SectionTitle action={<Link href="/inbox" className="muted text-xs underline">صندوق الوارد →</Link>}>
+        مراحل الطلبات
       </SectionTitle>
       <div className="flex gap-3 overflow-x-auto pb-2">
         {STAGES.map((s) => (
@@ -75,15 +75,15 @@ export default async function OrdersPage() {
                     <CourierStatusPill status={o.courier_status as string} />
                   </div>
                   <div className="mt-1 text-[11px] text-gray-400">{formatRelative(o.created_at as string)}</div>
-                  {o.locked_by_dispute ? <div className="mt-1 text-[11px] text-red-700">🔒 Locked — open dispute</div> : null}
+                  {o.locked_by_dispute ? <div className="mt-1 text-[11px] font-semibold text-red-700" lang="ar">قيد النزاع — الشحن متوقف</div> : null}
                 </article>
               ))}
               {(byStage[s.key] ?? []).length > 8 && (
-                <div className="px-1 text-[11px] text-gray-400">+{(byStage[s.key] ?? []).length - 8} more</div>
+                <div className="px-1 text-[11px] text-gray-400" lang="ar">+{(byStage[s.key] ?? []).length - 8} المزيد</div>
               )}
               {(byStage[s.key] ?? []).length === 0 && (
-                <div className="rounded-lg border border-dashed border-gray-200 p-3 text-center text-[11px] text-gray-400">
-                  Empty
+                <div className="rounded-lg border border-dashed border-gray-200 p-3 text-center text-[11px] text-gray-400" lang="ar">
+                  فارغ
                 </div>
               )}
             </div>
@@ -93,13 +93,13 @@ export default async function OrdersPage() {
 
       {/* Detailed table */}
       <div className="card mt-6">
-        <SectionTitle>All orders</SectionTitle>
+        <SectionTitle>جميع الطلبات</SectionTitle>
         <div className="overflow-x-auto">
           <table className="tbl">
             <thead>
               <tr>
-                <th>Order</th><th>Customer</th><th>City</th><th>Total</th>
-                <th>Status</th><th>Payment</th><th>Courier</th><th>ETA</th><th>When</th>
+                <th>الطلب</th><th>العميل</th><th>المدينة</th><th>الإجمالي</th>
+                <th>الحالة</th><th>الدفع</th><th>الشحن</th><th>موعد التوصيل</th><th>الوقت</th>
               </tr>
             </thead>
             <tbody>

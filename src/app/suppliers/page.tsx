@@ -5,10 +5,10 @@ import clsx from "clsx";
 export const dynamic = "force-dynamic";
 
 function riskBadge(score: number) {
-  if (score < 0.25) return { cls: "badge-pass", label: "low" };
-  if (score < 0.5) return { cls: "badge-info", label: "moderate" };
-  if (score < 0.7) return { cls: "badge-warn", label: "high" };
-  return { cls: "badge-fail", label: "blocked" };
+  if (score < 0.25) return { cls: "badge-pass", label: "منخفضة" };
+  if (score < 0.5) return { cls: "badge-info", label: "متوسطة" };
+  if (score < 0.7) return { cls: "badge-warn", label: "عالية" };
+  return { cls: "badge-fail", label: "محظور" };
 }
 
 export default async function SuppliersPage() {
@@ -21,20 +21,20 @@ export default async function SuppliersPage() {
   return (
     <div className="mx-auto max-w-7xl">
       <PageHeader
-        title="Suppliers"
-        subtitle="No bulk purchase without a real video and an approved sample. Risk score guides escalation."
+        title="الموردون"
+        subtitle="لا شراء بالجملة بدون فيديو حقيقي وعينة معتمدة. درجة المخاطرة تحكم التصعيد."
       />
       <DemoBanner demoMode={demoMode} />
 
       <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi label="Suppliers" value={rows.length} />
-        <Kpi label="Fully vetted" value={approved} hint="Video + sample approved" />
-        <Kpi label="On hold" value={holding} hint="Missing video or sample" />
-        <Kpi label="Avg unit cost" value={formatAed(avgUnit)} />
+        <Kpi label="الموردون" value={rows.length} />
+        <Kpi label="معتمدون كاملاً" value={approved} hint="فيديو + عينة معتمدة" />
+        <Kpi label="معلقون" value={holding} hint="فيديو أو عينة ناقصة" />
+        <Kpi label="متوسط تكلفة الوحدة" value={formatAed(avgUnit)} />
       </div>
 
       <div className="card">
-        <SectionTitle>Roster &amp; risk</SectionTitle>
+        <SectionTitle>القائمة والمخاطر</SectionTitle>
         <div className="grid gap-3 md:grid-cols-2">
           {sorted.map((s) => {
             const risk = riskBadge(Number(s.risk_score) || 0);
@@ -46,12 +46,12 @@ export default async function SuppliersPage() {
                 </div>
                 <div className="text-xs text-gray-500">{(s.country as string)} · {(s.platform as string)} · MOQ {s.moq as number}</div>
                 <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
-                  <Cell label="Unit cost" v={formatAed(Number(s.unit_cost))} />
-                  <Cell label="Shipping" v={formatAed(Number(s.shipping_cost))} />
-                  <Cell label="Production" v={s.production_time as string} />
-                  <Cell label="Sample" v={s.sample_status as string} />
-                  <Cell label="Real video" v={(s.real_video_received as boolean) ? "yes" : "missing"} highlight={!s.real_video_received} />
-                  <Cell label="Material proof" v={s.material_proof as string} highlight={(s.material_proof as string) === "missing"} />
+                  <Cell label="تكلفة الوحدة" v={formatAed(Number(s.unit_cost))} />
+                  <Cell label="الشحن" v={formatAed(Number(s.shipping_cost))} />
+                  <Cell label="الإنتاج" v={s.production_time as string} />
+                  <Cell label="العينة" v={s.sample_status as string} />
+                  <Cell label="فيديو حقيقي" v={(s.real_video_received as boolean) ? "نعم" : "غير متوفر"} highlight={!s.real_video_received} />
+                  <Cell label="إثبات المواد" v={s.material_proof as string} highlight={(s.material_proof as string) === "missing"} />
                 </div>
                 {s.notes ? <p className="mt-2 text-xs italic text-gray-500">{s.notes as string}</p> : null}
               </div>

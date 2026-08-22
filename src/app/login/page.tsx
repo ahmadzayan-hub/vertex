@@ -12,31 +12,30 @@ export default function LoginPage() {
     setMsg(null);
     setLoading(true);
     try {
-      // Dynamic-import so the Supabase JS bundle isn't pulled in on first paint
-      // and so the demo build works even when the client can't be created.
       const { createClient } = await import("@/lib/supabase/client");
       const supabase = createClient();
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setMsg(error.message);
       else window.location.href = "/";
     } catch {
-      setMsg("Supabase is not configured. Use 'Enter as demo owner' to explore.");
+      setMsg("لم يتم إعداد Supabase. استخدم وضع العرض التجريبي للاستكشاف.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="mx-auto mt-12 max-w-md md:mt-20">
+    <div className="mx-auto mt-12 max-w-md md:mt-20" lang="ar">
       <div className="mb-6 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Beyond Style UAE</h1>
-        <p className="muted">Order Control Console — owner / operator sign in.</p>
+        <h1 className="text-2xl font-semibold tracking-tight">مسار</h1>
+        <p className="muted">لوحة تحكم المبيعات — دخول صاحب المتجر.</p>
       </div>
 
       <div className="card flex flex-col gap-3">
         <div>
-          <label className="label">Email</label>
+          <label className="label" htmlFor="email">البريد الإلكتروني</label>
           <input
+            id="email"
             className="input"
             autoComplete="email"
             inputMode="email"
@@ -46,8 +45,9 @@ export default function LoginPage() {
           />
         </div>
         <div>
-          <label className="label">Password</label>
+          <label className="label" htmlFor="password">كلمة المرور</label>
           <input
+            id="password"
             className="input"
             type="password"
             autoComplete="current-password"
@@ -56,22 +56,21 @@ export default function LoginPage() {
           />
         </div>
         <button className="btn btn-primary" onClick={signIn} disabled={loading}>
-          {loading ? "Signing in…" : "Sign in"}
+          {loading ? "جارٍ الدخول…" : "دخول"}
         </button>
         {msg && <p className="text-sm text-red-700">{msg}</p>}
 
-        <div className="flex items-center gap-2 py-1 text-xs text-gray-400">
+        <div className="flex items-center gap-2 py-1 text-xs text-gray-500">
           <span className="h-px flex-1 bg-gray-200" />
-          <span>or</span>
+          <span>أو</span>
           <span className="h-px flex-1 bg-gray-200" />
         </div>
 
         <Link href="/" className="btn btn-accent justify-center">
-          Enter as demo owner
+          دخول وضع العرض التجريبي
         </Link>
         <p className="text-center text-xs text-gray-500">
-          Demo mode uses seeded data — no Supabase required. Connect a real Supabase
-          project to enable production sign-in.
+          وضع العرض يستخدم بيانات تجريبية — لا يحتاج إلى Supabase. اربط مشروع Supabase حقيقياً لتفعيل الدخول الإنتاجي.
         </p>
       </div>
     </div>

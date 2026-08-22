@@ -35,21 +35,21 @@ export default async function CouriersPage() {
   return (
     <div className="mx-auto max-w-7xl">
       <PageHeader
-        title="Couriers &amp; Delivery"
-        subtitle="Costs are configurable per courier. Outside Dubai requires courier confirmation before promising any window."
+        title="الشحن والتوصيل"
+        subtitle="التكاليف تُضبط لكل شركة شحن. التوصيل خارج دبي يتطلب تأكيد الشركة قبل إبلاغ العميل بأي وقت."
       />
       <DemoBanner demoMode={couriersRes.demoMode} />
 
       <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi label="Active deliveries" value={active.length} />
-        <Kpi label="Delivered total" value={deliveries.filter((d) => d.delivery_status === "delivered").length} />
-        <Kpi label="On-time rate" value={`${onTimeRate}%`} />
-        <Kpi label="Failed attempts" value={failures.length} />
+        <Kpi label="توصيلات نشطة" value={active.length} />
+        <Kpi label="إجمالي الموصّل" value={deliveries.filter((d) => d.delivery_status === "delivered").length} />
+        <Kpi label="نسبة الالتزام بالموعد" value={`${onTimeRate}%`} />
+        <Kpi label="محاولات فاشلة" value={failures.length} />
       </div>
 
       {/* Couriers grid */}
       <div className="card mb-4">
-        <SectionTitle>Courier roster</SectionTitle>
+        <SectionTitle>قائمة شركات الشحن</SectionTitle>
         <div className="grid gap-3 md:grid-cols-3">
           {couriers.map((c) => (
             <div key={c.id as string} className="rounded-xl border border-gray-200 bg-gray-50 p-3 text-sm">
@@ -59,8 +59,8 @@ export default async function CouriersPage() {
               </div>
               <div className="mt-1 text-xs text-gray-600">{c.notes as string}</div>
               <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
-                <span>Default: <strong className="text-gray-900">{formatAed(Number(c.default_cost))}</strong></span>
-                <span>{c.vat_included ? "VAT incl." : "VAT excl."}</span>
+                <span lang="ar">افتراضي: <strong className="text-gray-900">{formatAed(Number(c.default_cost))}</strong></span>
+                <span lang="ar">{c.vat_included ? "شامل ضريبة" : "غير شامل ضريبة"}</span>
               </div>
             </div>
           ))}
@@ -69,13 +69,13 @@ export default async function CouriersPage() {
 
       {/* Active deliveries */}
       <div className="card mb-4">
-        <SectionTitle>Active deliveries</SectionTitle>
+        <SectionTitle>التوصيلات النشطة</SectionTitle>
         {activeWithOrders.length === 0 ? (
-          <p className="text-sm text-gray-500">No deliveries in flight right now.</p>
+          <p className="text-sm text-slate-500" lang="ar">لا توصيلات جارية الآن.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="tbl">
-              <thead><tr><th>Order</th><th>Customer</th><th>Emirate</th><th>Expected</th><th>Courier</th><th>Status</th></tr></thead>
+              <thead><tr><th>الطلب</th><th>العميل</th><th>الإمارة</th><th>الموعد المتوقع</th><th>شركة الشحن</th><th>الحالة</th></tr></thead>
               <tbody>
                 {activeWithOrders.map(({ delivery, order, window }) => (
                   <tr key={delivery.id as string}>
@@ -95,12 +95,12 @@ export default async function CouriersPage() {
 
       {/* Emirate buffers */}
       <div className="card">
-        <SectionTitle>Expected delivery windows by emirate</SectionTitle>
+        <SectionTitle>مواعيد التوصيل المتوقعة حسب الإمارة</SectionTitle>
         <div className="grid gap-2 text-sm md:grid-cols-4">
           {Object.entries(EMIRATE_BUFFERS).map(([emirate, b]) => (
             <div key={emirate} className="rounded-lg bg-gray-50 px-3 py-2">
               <div className="font-medium capitalize">{emirate}</div>
-              <div className="text-xs text-gray-500">{b.minDays}–{b.maxDays} day{b.maxDays > 1 ? "s" : ""}{emirate.toLowerCase() === "dubai" ? "" : " · courier confirm"}</div>
+              <div className="text-xs text-gray-500" lang="ar">{b.minDays}–{b.maxDays} يوم{emirate.toLowerCase() === "dubai" ? "" : " · تأكيد الشركة"}</div>
             </div>
           ))}
         </div>

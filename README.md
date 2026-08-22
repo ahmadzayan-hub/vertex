@@ -27,16 +27,16 @@ before an operator can approve and send it.
 ## Quick start
 
 ```bash
-cd beyond-style-uae
+# The app is at the repository root — no subdirectory needed
 npm install
-cp .env.example .env.local      # fill in Supabase + AI provider
-npm run test                    # 20 guardrail/logic tests
+cp .env.example .env.local      # fill in Supabase + AI provider (or leave blank for demo mode)
+npm run test                    # 31 unit tests — guardrail scenarios + OAuth crypto
 npm run dev                     # http://localhost:3000
 ```
 
-The app runs **before** Supabase is configured (pages show a "connect Supabase"
-hint) and **before** an AI key is set (`AI_PROVIDER=mock` returns placeholder
-analysis so you can see the flow end-to-end).
+The app runs **before** Supabase is configured (demo mode uses seeded in-memory data)
+and **before** an AI key is set (`AI_PROVIDER=mock` returns safe placeholder analysis
+so you can see the full flow end-to-end without any credentials).
 
 ### Database
 

@@ -2,7 +2,6 @@
 // Keeps route handlers and pages thin: they ask for connection status or a
 // fresh access token and this module handles refresh + persistence.
 
-import { cache } from "react";
 import {
   notebookLmConfig,
   refreshAccessToken,
@@ -19,16 +18,16 @@ export interface NotebookLmStatus {
 }
 
 /** Cheap, read-only status for rendering the integrations UI. */
-export const getNotebookLmStatus = cache((): NotebookLmStatus => {
+export async function getNotebookLmStatus(): Promise<NotebookLmStatus> {
   const configured = notebookLmConfig("https://placeholder.local/callback") !== null;
-  const tokens = readTokens();
+  const tokens = await readTokens();
   return {
     configured,
     connected: !!tokens,
     scopes: tokens?.scope ? tokens.scope.split(/\s+/).filter(Boolean) : [],
     expiresAt: tokens?.expires_at ?? null,
   };
-});
+}
 
 /**
  * Return a valid access token for calling Google APIs on the owner's behalf,
@@ -41,13 +40,13 @@ export async function getValidAccessToken(
   const config = notebookLmConfig(fallbackRedirectUri);
   if (!config) return null;
 
-  const tokens = readTokens();
+  const tokens = await readTokens();
   if (!tokens) return null;
 
   if (!isExpired(tokens)) return tokens;
   if (!tokens.refresh_token) return tokens; // can't refresh; let caller handle 401
 
   const refreshed = await refreshAccessToken(config, tokens.refresh_token);
-  saveTokens(refreshed);
+  await saveTokens(refreshed);
   return refreshed;
 }

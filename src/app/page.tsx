@@ -42,44 +42,44 @@ export default async function Dashboard() {
   return (
     <div className="mx-auto max-w-7xl">
       <PageHeader
-        title="Beyond Style UAE — Control Tower"
-        subtitle="Live conversion, payment, delivery & margin. Demo data updates every reload."
+        title="لوحة التحكم"
+        subtitle="الإيراد والمدفوعات وحالة التوصيل — تتحدث عند كل تحميل."
         action={
-          <Link href="/intake" className="btn btn-accent">+ New Conversation</Link>
+          <Link href="/intake" className="btn btn-accent">+ محادثة جديدة</Link>
         }
       />
       <DemoBanner demoMode={demoMode} />
 
       {/* Hero KPIs */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi label="Revenue today (AED)" value={formatAed(kpis.revenueAedToday)} hint="Confirmed paid orders only" />
-        <Kpi label="Revenue last 7 days" value={formatAed(kpis.revenueAed7d)} hint={`30d: ${formatAed(kpis.revenueAed30d)}`} />
-        <Kpi label="Awaiting payment" value={formatAed(kpis.pendingPaymentAed)} hint={`${kpis.paymentLinksSent} links sent`} />
-        <Kpi label="Open disputes" value={kpis.openDisputes} hint={kpis.openDisputes ? "Block dispatch until resolved" : "Clear"} />
+        <Kpi label="إيراد اليوم (د.إ)" value={formatAed(kpis.revenueAedToday)} hint="الطلبات المدفوعة فقط" />
+        <Kpi label="إيراد آخر 7 أيام" value={formatAed(kpis.revenueAed7d)} hint={`30 يوم: ${formatAed(kpis.revenueAed30d)}`} />
+        <Kpi label="بانتظار الدفع" value={formatAed(kpis.pendingPaymentAed)} hint={`${kpis.paymentLinksSent} رابط دفع`} />
+        <Kpi label="نزاعات مفتوحة" value={kpis.openDisputes} hint={kpis.openDisputes ? "الشحن متوقف حتى الحل" : "لا نزاعات"} />
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-5">
-        <Kpi label="Hot leads" value={kpis.hotLeads} />
-        <Kpi label="New today" value={kpis.newToday} />
-        <Kpi label="Price inquiries" value={kpis.priceInquiries} />
-        <Kpi label="Delivered" value={kpis.deliveredOrders} />
-        <Kpi label="Lead → payment" value={`${kpis.leadToPayment}%`} />
+        <Kpi label="عملاء ساخنون" value={kpis.hotLeads} />
+        <Kpi label="جدد اليوم" value={kpis.newToday} />
+        <Kpi label="استفسارات سعر" value={kpis.priceInquiries} />
+        <Kpi label="تم التوصيل" value={kpis.deliveredOrders} />
+        <Kpi label="تحويل إلى دفع" value={`${kpis.leadToPayment}%`} />
       </div>
 
       {/* Revenue + Attention queue */}
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <div className="card lg:col-span-2">
-          <SectionTitle action={<span className="muted">14-day revenue (AED)</span>}>
-            Revenue trend
+          <SectionTitle action={<span className="muted">14 يوماً (د.إ)</span>}>
+            منحنى الإيراد
           </SectionTitle>
           <RevenueAreaChart data={revenueSeries} />
         </div>
         <div className="card">
-          <SectionTitle action={<Link className="muted text-xs underline" href="/inbox">Open inbox →</Link>}>
-            Needs your attention
+          <SectionTitle action={<Link className="muted text-xs underline" href="/inbox">صندوق الوارد →</Link>}>
+            يحتاج اهتمامك
           </SectionTitle>
           {attention.length === 0 ? (
-            <p className="text-sm text-gray-500">Inbox is clear — enjoy a quiet moment 🤍</p>
+            <p className="text-sm text-slate-500" lang="ar">لا تنبيهات الآن — كل شيء مرتب</p>
           ) : (
             <ul className="flex flex-col gap-2">
               {attention.map((a) => (
@@ -104,11 +104,11 @@ export default async function Dashboard() {
       {/* Status + Funnel */}
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <div className="card">
-          <SectionTitle>Order status (14 days)</SectionTitle>
+          <SectionTitle>حالة الطلبات (14 يوم)</SectionTitle>
           <StackedStatusChart data={statusSeries} />
         </div>
         <div className="card">
-          <SectionTitle>Conversion funnel</SectionTitle>
+          <SectionTitle>قمع التحويل</SectionTitle>
           <FunnelBarChart data={funnel} />
         </div>
       </div>
@@ -116,13 +116,13 @@ export default async function Dashboard() {
       {/* Top products + Platform mix */}
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <div className="card lg:col-span-2">
-          <SectionTitle action={<Link href="/inventory" className="muted text-xs underline">Inventory →</Link>}>
-            Top products (paid orders)
+          <SectionTitle action={<Link href="/inventory" className="muted text-xs underline">المخزون →</Link>}>
+            أفضل المنتجات (طلبات مدفوعة)
           </SectionTitle>
           <TopProductsChart data={top} />
         </div>
         <div className="card">
-          <SectionTitle>Where leads come from</SectionTitle>
+          <SectionTitle>مصادر العملاء</SectionTitle>
           <PlatformPie data={platforms} />
         </div>
       </div>
@@ -130,11 +130,11 @@ export default async function Dashboard() {
       {/* Recent activity */}
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <div className="card lg:col-span-2">
-          <SectionTitle action={<Link href="/orders" className="muted text-xs underline">All orders →</Link>}>
-            Latest orders
+          <SectionTitle action={<Link href="/orders" className="muted text-xs underline">كل الطلبات →</Link>}>
+            آخر الطلبات
           </SectionTitle>
           <table className="tbl">
-            <thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th><th>Payment</th><th>When</th></tr></thead>
+            <thead><tr><th>الطلب</th><th>العميل</th><th>الإجمالي</th><th>الحالة</th><th>الدفع</th><th>الوقت</th></tr></thead>
             <tbody>
               {orders.slice(0, 7).map((o) => (
                 <tr key={o.id as string}>
@@ -150,12 +150,12 @@ export default async function Dashboard() {
           </table>
         </div>
         <div className="card">
-          <SectionTitle action={<Link href="/reviews" className="muted text-xs underline">All →</Link>}>
-            Recent reviews
+          <SectionTitle action={<Link href="/reviews" className="muted text-xs underline">الكل →</Link>}>
+            أحدث التقييمات
           </SectionTitle>
           <ul className="flex flex-col gap-3">
             {(reviewsRes.rows as Array<Record<string, unknown>>).slice(0, 4).map((r) => (
-              <li key={r.id as string} className="border-l-2 border-pink-300 pl-3">
+              <li key={r.id as string} className="border-l-2 border-amber-300 pl-3">
                 <div className="text-xs text-gray-500">
                   {"★".repeat(Number(r.rating) || 0)}{" "}
                   <span className="text-gray-400">·</span>{" "}
@@ -170,8 +170,8 @@ export default async function Dashboard() {
 
       {/* Latest conversations */}
       <div className="mt-4 card">
-        <SectionTitle action={<Link href="/inbox" className="muted text-xs underline">Open inbox →</Link>}>
-          Latest conversations
+        <SectionTitle action={<Link href="/inbox" className="muted text-xs underline">صندوق الوارد →</Link>}>
+          آخر المحادثات
         </SectionTitle>
         <ul className="flex flex-col">
           {conversations.slice(0, 6).map((c) => (
