@@ -37,7 +37,7 @@
   ],
   "exclude": [
     "node_modules",
-    "beyond-style-uae",
+    "vertex-platform",
     "playwright.config.ts",
     "tests/e2e"
   ]
