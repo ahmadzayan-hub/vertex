@@ -90,6 +90,35 @@
       "comment_added": "New comment"
     }
   },
+  "matrix": {
+    "title": "Compliance matrix",
+    "subtitle": "Contract requirement against contract. The worst item decides each cell.",
+    "requirement": "Requirement",
+    "rows": {
+      "submissions": "Submissions",
+      "deliverable": "Deliverables",
+      "payment": "Payments",
+      "approval": "Approvals",
+      "compliance": "Compliance",
+      "renewal": "Renewals"
+    },
+    "status": {
+      "compliant": "Compliant",
+      "at_risk": "At risk",
+      "non_compliant": "Non-compliant",
+      "no_data": "Nothing to assess"
+    },
+    "cellLabel": "{{requirement}}, {{contract}}: {{status}}, {{attention}} of {{total}} need attention",
+    "empty": "No contracts yet. Create a project to build the matrix.",
+    "emptyHint": "Every cell is derived from real obligations and submissions, so the matrix stays empty until there is something to judge.",
+    "pick": "Select a cell to see what drives it.",
+    "drivers": "What drives this verdict",
+    "noDrivers": "Nothing is failing in this cell.",
+    "openObligations": "Open obligations",
+    "openSubmissions": "Open submissions",
+    "totalLabel": "{{count}} tracked",
+    "legend": "Legend"
+  },
   "upload": {
     "title": "New submission",
     "subtitle": "Upload a document and run compliance analysis.",
