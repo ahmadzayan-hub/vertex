@@ -93,6 +93,8 @@ export interface AiFinding {
   evidence_extract: string | null;
   evidence_level: EvidenceLevel;
   source_citation: string | null;
+  /** Portfolio EvidenceObject id (ev_<ulid>) — see docs/contracts/EVIDENCE.md. */
+  evidence_id?: string | null;
   confidence_percent: number;
   requires_action: boolean;
   ai_model_used: string;

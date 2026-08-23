@@ -32,6 +32,11 @@ export function EvidenceCitation({ finding }: Props) {
         <span>
           {t('evidence.confidence')}: <strong className="text-slate-700">{finding.confidence_percent}%</strong>
         </span>
+        {finding.evidence_id && (
+          <span className="font-mono" dir="ltr" title={finding.evidence_id}>
+            {finding.evidence_id.slice(0, 3)}…{finding.evidence_id.slice(-6)}
+          </span>
+        )}
       </div>
     </div>
   );
