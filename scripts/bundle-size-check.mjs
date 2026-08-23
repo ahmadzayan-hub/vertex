@@ -18,7 +18,10 @@ const DIST = join(process.cwd(), 'dist', 'assets');
 const LIMITS = [
   { family: 'index',              maxKB: 25  }, // landing + login entry
   { family: 'react',              maxKB: 55  },
-  { family: 'router',             maxKB: 12  },
+  // 14 KB, not 12: React Router 7 is ~1.2 KB gz larger than 6. The upgrade
+  // was taken to close the open-redirect-to-XSS advisory in 6.x, so the
+  // growth buys a security fix rather than a feature.
+  { family: 'router',             maxKB: 14  },
   { family: 'i18n',               maxKB: 25  },
   { family: 'supabase',           maxKB: 65  },
   { family: 'charts',             maxKB: 125 }, // recharts + d3
