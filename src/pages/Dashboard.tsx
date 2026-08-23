@@ -8,6 +8,10 @@ import { AlertsPanel } from '@/components/dashboard/AlertsPanel';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useDashboardStats, trafficLightForStat } from '@/hooks/useDashboardStats';
+import { useProjects } from '@/hooks/useProjects';
+import { useObligations } from '@/hooks/useObligations';
+import { useSubmissions } from '@/hooks/useSubmissions';
+import { ComplianceMatrix } from '@/components/compliance/ComplianceMatrix';
 import { formatCurrencyAED } from '@/utils/formatters';
 
 export default function Dashboard() {
@@ -15,6 +19,9 @@ export default function Dashboard() {
   const { profile, user } = useAuth();
   const greeting = profile?.full_name || user?.email || '';
   const { stats, activity, trend, byStatus, loading, error } = useDashboardStats();
+  const { projects } = useProjects();
+  const { obligations } = useObligations();
+  const { submissions } = useSubmissions({ limit: 200 });
 
   const alerts = (stats?.insurance_expiring_30d_count ?? 0) > 0
     ? [{
@@ -44,6 +51,16 @@ export default function Dashboard() {
           <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
             {error}
           </div>
+        )}
+
+        {/* The control room opens on the matrix: requirement against contract,
+            before any aggregate number. */}
+        {!loading && (
+          <ComplianceMatrix
+            projects={projects}
+            obligations={obligations}
+            submissions={submissions}
+          />
         )}
 
         {stats && (
