@@ -9,7 +9,7 @@ import { test, expect } from '@playwright/test';
 //   E2E_TEST_PASSWORD             <password from tests/fixtures/seed.sql>
 //   E2E_TEST_PROJECT_NAME         E2E Test Project
 //
-// Locally, load them into vertex-platform/.env.local before `npm run e2e`.
+// Locally, load them into .env.local before `npm run e2e`.
 // In CI, add them as GitHub Actions secrets on the `e2e` job.
 
 const HAVE_SECRETS =

@@ -1,39 +1,42 @@
-import { defineConfig, devices } from "@playwright/test";
+import { defineConfig, devices } from '@playwright/test';
+
+const PORT = 5187;
+const BASE_URL = `http://127.0.0.1:${PORT}`;
 
 export default defineConfig({
-  testDir: "./tests/e2e",
-  fullyParallel: false,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
-  workers: 1,
-  reporter: process.env.CI ? "github" : "list",
+  testDir: './tests/e2e',
+  timeout: 30_000,
+  expect: { timeout: 5_000 },
+  fullyParallel: true,
+  reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: {
-    baseURL: process.env.E2E_BASE_URL ?? "http://localhost:3000",
-    trace: "on-first-retry",
-    // No Supabase env → demo mode; tests run without credentials
-    extraHTTPHeaders: {},
+    baseURL: BASE_URL,
+    trace: 'retain-on-failure',
+    video: 'retain-on-failure',
   },
   projects: [
     {
-      name: "chromium",
+      name: 'chromium',
       use: {
-        ...devices["Desktop Chrome"],
-        launchOptions: {
-          executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH ?? "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
-          args: ["--no-sandbox", "--disable-setuid-sandbox"],
-        },
+        ...devices['Desktop Chrome'],
+        // Point at the pre-installed Chromium in this sandbox to avoid a
+        // Playwright browser download. In CI the setup-chromium action or
+        // `npx playwright install --with-deps chromium` is what fills this.
+        launchOptions: process.env.PLAYWRIGHT_CHROMIUM_PATH
+          ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH }
+          : undefined,
+        channel: process.env.PLAYWRIGHT_CHROMIUM_PATH ? undefined : 'chromium',
       },
     },
   ],
   webServer: {
-    command: "npm run build && npm run start",
-    port: 3000,
+    command: `npx vite --port ${PORT} --host 127.0.0.1`,
+    url: BASE_URL,
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    timeout: 60_000,
     env: {
-      AI_PROVIDER: "mock",
-      NEXT_PUBLIC_SUPABASE_URL: "",
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: "",
+      VITE_SUPABASE_URL: 'https://ci-placeholder.supabase.co',
+      VITE_SUPABASE_ANON_KEY: 'ci-placeholder-anon-key',
     },
   },
 });
