@@ -1,5 +1,16 @@
 # Beyond Style UAE — Customer Conversion & Order Control Agent
 
+## Product Authority
+
+| | |
+|---|---|
+| **Primary User** | Contract managers / commercial teams |
+| **Job To Be Done** | Administer contract compliance end-to-end |
+| **System of Record** | Contracts, obligations, submissions, commercial & compliance review (certificates, invoices, claims, variations, bonds) |
+| **System of Intelligence** | Compliance matrix, findings, contractor performance scores |
+| **Explicit Non-Goals** | Generic document chat (→ Mutabasir) · replacing formal legal opinion · any Beyond Style code |
+
+
 A **human-approved sales operating console** for Beyond Style UAE
 (BEYOND CONNECT GENERAL TRADING L.L.C). This is **not** an auto-reply bot. It is
 a control tower for UAE social commerce: the agent **drafts** replies and order
