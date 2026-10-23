@@ -4,12 +4,18 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/hooks/useLanguage';
 import { validateEmail, validatePassword } from '@/utils/formatters';
+import { isSupabaseConfigured } from '@/utils/supabase';
 
 interface LocationState {
   from?: { pathname?: string };
 }
 
-export function LoginForm() {
+interface LoginFormProps {
+  /** Overrides the build-time Supabase check. Used by tests. */
+  configured?: boolean;
+}
+
+export function LoginForm({ configured = isSupabaseConfigured }: LoginFormProps = {}) {
   const { t } = useLanguage();
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -20,6 +26,7 @@ export function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showResetHelp, setShowResetHelp] = useState(false);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -37,6 +44,11 @@ export function LoginForm() {
       return;
     }
 
+    if (!configured) {
+      setError(t('auth.notConfiguredError'));
+      return;
+    }
+
     setSubmitting(true);
     const result = await login(email, password);
     setSubmitting(false);
@@ -51,6 +63,14 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit} noValidate aria-describedby={error ? 'login-error' : undefined}>
       <div className="space-y-4">
+        {!configured && (
+          <div
+            role="status"
+            className="rounded-lg border border-status-amber/40 bg-amber-50 px-3 py-2 text-sm text-amber-800"
+          >
+            {t('auth.notConfigured')}
+          </div>
+        )}
         <div>
           <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-700">
             {t('auth.email')}
@@ -108,13 +128,20 @@ export function LoginForm() {
         </button>
 
         <div className="text-center">
-          <a
-            href="#"
+          <button
+            type="button"
             className="text-sm text-vertex-600 hover:underline focus-visible:underline"
-            onClick={(e) => e.preventDefault()}
+            aria-expanded={showResetHelp}
+            aria-controls="reset-help"
+            onClick={() => setShowResetHelp((v) => !v)}
           >
             {t('auth.forgot')}
-          </a>
+          </button>
+          {showResetHelp && (
+            <p id="reset-help" className="mt-2 text-xs text-slate-600">
+              {t('auth.resetHelp')}
+            </p>
+          )}
         </div>
       </div>
     </form>
