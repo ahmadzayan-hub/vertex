@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400" role="img" aria-labelledby="t d">
+  <title id="t">VERTEX</title>
+  <desc id="d">Contract and project intelligence for UAE infrastructure and services contracts.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#312e81"/>
+      <stop offset="100%" stop-color="#4338ca"/>
+    </linearGradient>
+    <linearGradient id="v" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e0e7ff"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="400" fill="url(#bg)"/>
+  <g stroke="#6366f1" stroke-opacity="0.25" stroke-width="1">
+    <path d="M760 0 L1280 400"/><path d="M840 0 L1280 330"/><path d="M920 0 L1280 260"/>
+    <path d="M1000 0 L1280 190"/><path d="M680 0 L1200 400"/><path d="M600 0 L1120 400"/>
+  </g>
+  <!-- Brand mark -->
+  <path d="M96 110 L144 200 L192 110" stroke="url(#v)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <circle cx="144" cy="110" r="13" fill="#f59e0b"/>
+  <text x="96" y="285" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="72" font-weight="800" fill="#ffffff" letter-spacing="2">VERTEX</text>
+  <text x="96" y="330" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" fill="#e0e7ff">Contract compliance review for UAE infrastructure contracts</text>
+  <text x="96" y="364" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18" fill="#a5b4fc">Score, traffic-light verdict and clause-referenced findings · English and Arabic</text>
+  <!-- Traffic-light verdict cards -->
+  <g font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18" font-weight="600">
+    <rect x="900" y="90" width="300" height="64" rx="14" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.2"/>
+    <circle cx="932" cy="122" r="11" fill="#16a34a"/>
+    <text x="956" y="128" fill="#ffffff">Good</text>
+    <rect x="900" y="168" width="300" height="64" rx="14" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.2"/>
+    <circle cx="932" cy="200" r="11" fill="#d97706"/>
+    <text x="956" y="206" fill="#ffffff">Caution</text>
+    <rect x="900" y="246" width="300" height="64" rx="14" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.2"/>
+    <circle cx="932" cy="278" r="11" fill="#dc2626"/>
+    <text x="956" y="284" fill="#ffffff">Alert</text>
+  </g>
+  <text x="1200" y="350" direction="rtl" text-anchor="start" font-family="Noto Sans Arabic, Segoe UI, Tahoma, sans-serif" font-size="22" fill="#e0e7ff">مراجعة الامتثال التعاقدي</text>
+</svg>

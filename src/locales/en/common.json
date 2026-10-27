@@ -33,7 +33,10 @@
     "welcome": "Welcome back",
     "welcomeSubtitle": "Sign in to your VERTEX workspace",
     "passwordHint": "At least 8 characters, with one uppercase letter and one number",
-    "loggedOut": "You have been logged out."
+    "loggedOut": "You have been logged out.",
+    "resetHelp": "Password resets are handled by your workspace administrator. Ask them to send you a reset link from the Supabase dashboard.",
+    "notConfigured": "This deployment is not connected to a Supabase project yet. Sign-in is unavailable until VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set.",
+    "notConfiguredError": "Sign-in is unavailable: no Supabase project is configured for this deployment."
   },
   "errors": {
     "invalidEmail": "Please enter a valid email address.",
