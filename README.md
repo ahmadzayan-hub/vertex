@@ -2,6 +2,8 @@
   <img src="docs/assets/banner.svg" alt="VERTEX: contract compliance review for UAE infrastructure contracts" width="100%">
 </p>
 
+<p align="center"><img src="docs/assets/hero.jpg" alt="Concept image (AI-generated). Not a product screenshot." width="100%"><br><sub><em>Concept image (AI-generated). Not a product screenshot.</em></sub></p>
+
 <p align="center">
   <strong>Upload a contract submission. Get a compliance score, a traffic-light verdict and clause-referenced findings.</strong>
 </p>
