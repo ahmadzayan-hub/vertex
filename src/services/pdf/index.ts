@@ -1,7 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-import { pickFontFor } from './arabicFont';
+import { toRtlTable } from './rtlTable';
 
 import type {
   Submission,
@@ -85,11 +85,17 @@ export interface SubmissionReportInput {
   language?: 'en' | 'ar';
 }
 
-export function generateSubmissionReport(input: SubmissionReportInput): void {
+export async function generateSubmissionReport(input: SubmissionReportInput): Promise<void> {
   const { submission, project, findings, t, brand, pageLabel, language = 'en' } = input;
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  // Dynamically imported so the ~65KB Arabic glyph subset ships only to users
+  // who actually generate a report, instead of bloating every Reports-page load.
+  const { pickFontFor } = await import('./arabicFont');
   const bodyFont = pickFontFor(doc, language);
   doc.setFont(bodyFont);
+  doc.setR2L(language === 'ar');
+  const table = (options: Parameters<typeof autoTable>[1]) =>
+    autoTable(doc, language === 'ar' ? toRtlTable(options) : options);
   drawHeader(doc, brand, submission.document_name);
 
   doc.setFontSize(9);
@@ -103,7 +109,7 @@ export function generateSubmissionReport(input: SubmissionReportInput): void {
     [`${t('status.green')}:`, submission.traffic_light ?? '-'],
     [`${t('submission.meta.approval')}:`, submission.approval_status],
   ];
-  autoTable(doc, {
+  table({
     startY: 40,
     body: meta,
     theme: 'plain',
@@ -120,7 +126,7 @@ export function generateSubmissionReport(input: SubmissionReportInput): void {
     `${f.confidence_percent}%`,
   ]);
 
-  autoTable(doc, {
+  table({
     startY: (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY
       ? (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 6
       : 90,
@@ -161,13 +167,17 @@ export interface ProjectReportInput {
   language?: 'en' | 'ar';
 }
 
-export function generateProjectReport(input: ProjectReportInput): void {
+export async function generateProjectReport(input: ProjectReportInput): Promise<void> {
   const { project, submissions, obligations, kpi, insurance, t, brand, pageLabel, language = 'en' } = input;
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const { pickFontFor } = await import('./arabicFont');
   doc.setFont(pickFontFor(doc, language));
+  doc.setR2L(language === 'ar');
+  const table = (options: Parameters<typeof autoTable>[1]) =>
+    autoTable(doc, language === 'ar' ? toRtlTable(options) : options);
   drawHeader(doc, brand, project.name);
 
-  autoTable(doc, {
+  table({
     startY: 40,
     body: [
       [`${t('project.meta.contract_ref')}:`, project.contract_ref],
@@ -190,7 +200,7 @@ export function generateProjectReport(input: ProjectReportInput): void {
     s.traffic_light ?? '-',
     s.approval_status,
   ]);
-  autoTable(doc, {
+  table({
     startY: (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 6,
     head: [[
       t('submission.meta.uploaded'),
@@ -213,7 +223,7 @@ export function generateProjectReport(input: ProjectReportInput): void {
     o.status,
     o.days_remaining ?? '-',
   ]);
-  autoTable(doc, {
+  table({
     startY: (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 6,
     head: [[
       t('obligationsPage.meta.due'),
@@ -235,7 +245,7 @@ export function generateProjectReport(input: ProjectReportInput): void {
     `AED ${Number(k.penalty_amount_aed).toLocaleString()}`,
     k.deduction_approved ? '✓' : '-',
   ]);
-  autoTable(doc, {
+  table({
     startY: (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 6,
     head: [[
       t('kpiPage.table.month'),
@@ -258,7 +268,7 @@ export function generateProjectReport(input: ProjectReportInput): void {
     p.days_to_expiry ?? '-',
     p.renewal_status,
   ]);
-  autoTable(doc, {
+  table({
     startY: (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 6,
     head: [[
       t('insurancePage.table.coverage'),
@@ -287,7 +297,7 @@ export async function generateSubmissionReportById(id: string, t: T, brand: Repo
     supabase.from('projects').select('*').eq('id', sub.project_id).maybeSingle(),
     supabase.from('ai_findings').select('*').eq('submission_id', id),
   ]);
-  generateSubmissionReport({
+  await generateSubmissionReport({
     submission: sub as Submission,
     project: (project as Project) ?? null,
     findings: (findings ?? []) as AiFinding[],
@@ -313,7 +323,7 @@ export async function generateProjectReportById(id: string, t: T, brand: ReportB
     supabase.from('kpi_tracking').select('*').eq('project_id', id).order('month', { ascending: false }),
     supabase.from('insurance_tracking').select('*').eq('project_id', id).order('days_to_expiry', { ascending: true, nullsFirst: false }),
   ]);
-  generateProjectReport({
+  await generateProjectReport({
     project: project as Project,
     submissions: (subs.data ?? []) as Submission[],
     obligations: (obls.data ?? []) as Obligation[],
