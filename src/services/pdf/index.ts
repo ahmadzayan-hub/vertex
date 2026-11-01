@@ -1,7 +1,6 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-import { pickFontFor } from './arabicFont';
 import { toRtlTable } from './rtlTable';
 
 import type {
@@ -86,9 +85,12 @@ export interface SubmissionReportInput {
   language?: 'en' | 'ar';
 }
 
-export function generateSubmissionReport(input: SubmissionReportInput): void {
+export async function generateSubmissionReport(input: SubmissionReportInput): Promise<void> {
   const { submission, project, findings, t, brand, pageLabel, language = 'en' } = input;
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  // Dynamically imported so the ~65KB Arabic glyph subset ships only to users
+  // who actually generate a report, instead of bloating every Reports-page load.
+  const { pickFontFor } = await import('./arabicFont');
   const bodyFont = pickFontFor(doc, language);
   doc.setFont(bodyFont);
   doc.setR2L(language === 'ar');
@@ -165,9 +167,10 @@ export interface ProjectReportInput {
   language?: 'en' | 'ar';
 }
 
-export function generateProjectReport(input: ProjectReportInput): void {
+export async function generateProjectReport(input: ProjectReportInput): Promise<void> {
   const { project, submissions, obligations, kpi, insurance, t, brand, pageLabel, language = 'en' } = input;
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const { pickFontFor } = await import('./arabicFont');
   doc.setFont(pickFontFor(doc, language));
   doc.setR2L(language === 'ar');
   const table = (options: Parameters<typeof autoTable>[1]) =>
@@ -294,7 +297,7 @@ export async function generateSubmissionReportById(id: string, t: T, brand: Repo
     supabase.from('projects').select('*').eq('id', sub.project_id).maybeSingle(),
     supabase.from('ai_findings').select('*').eq('submission_id', id),
   ]);
-  generateSubmissionReport({
+  await generateSubmissionReport({
     submission: sub as Submission,
     project: (project as Project) ?? null,
     findings: (findings ?? []) as AiFinding[],
@@ -320,7 +323,7 @@ export async function generateProjectReportById(id: string, t: T, brand: ReportB
     supabase.from('kpi_tracking').select('*').eq('project_id', id).order('month', { ascending: false }),
     supabase.from('insurance_tracking').select('*').eq('project_id', id).order('days_to_expiry', { ascending: true, nullsFirst: false }),
   ]);
-  generateProjectReport({
+  await generateProjectReport({
     project: project as Project,
     submissions: (subs.data ?? []) as Submission[],
     obligations: (obls.data ?? []) as Obligation[],
