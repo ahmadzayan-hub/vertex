@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Arabic PDF shaping (golden) > shapes an Arabic contract clause into joined presentation forms 1`] = `"ﺍﻟﺒﻨﺪ 4.2.1: ﻳﻠﺘﺰﻡ ﺍﻟﻤﺘﻌﻬﺪ ﺑﺘﺴﻠﻴﻢ ﺟﻤﻴﻊ ﺍﻟﻮﺛﺎﺋﻖ ﺍﻟﻔﻨﻴﺔ ﺧﻼﻝ ﻋﺸﺮﺓ ﺃﻳﺎﻡ ﻋﻤﻞ ﻣﻦ ﺗﺎﺭﻳﺦ ﺍﻹﺷﻌﺎﺭ ﺍﻟﺮﺳﻤﻲ."`;
