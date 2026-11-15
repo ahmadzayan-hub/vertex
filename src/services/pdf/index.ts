@@ -23,8 +23,10 @@ interface ReportBrand {
 const BRAND_COLOR: [number, number, number] = [79, 70, 229]; // vertex-600
 const MUTED_COLOR: [number, number, number] = [100, 116, 139];
 
-function drawHeader(doc: jsPDF, brand: ReportBrand, subtitle: string) {
+function drawHeader(doc: jsPDF, brand: ReportBrand, subtitle: string, font: string) {
   const pageW = doc.internal.pageSize.getWidth();
+  const arabic = font !== 'helvetica';
+  const headingStyle = arabic ? 'normal' : 'bold';
   // Header stripe
   doc.setFillColor(...BRAND_COLOR);
   doc.rect(0, 0, pageW, 22, 'F');
@@ -38,26 +40,35 @@ function drawHeader(doc: jsPDF, brand: ReportBrand, subtitle: string) {
   // Wordmark
   doc.setFontSize(14);
   doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont(font, headingStyle);
   doc.text('VERTEX', 30, 13);
   // Title on the right
   doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
+  doc.setFont(font, 'normal');
   doc.text(brand.title, pageW - 14, 10, { align: 'right' });
   doc.setFontSize(8);
   doc.setTextColor(230, 230, 230);
-  doc.text(`${brand.confidential} - ${brand.generatedAt}`, pageW - 14, 16, { align: 'right' });
+  // Keep the browser-formatted date and time together inside the Arabic line.
+  const generatedAt = arabic ? `\u2068${brand.generatedAt}\u2069` : brand.generatedAt;
+  doc.text(`${brand.confidential} - ${generatedAt}`, pageW - 14, 16, { align: 'right' });
   // Subtitle
   doc.setTextColor(15, 23, 42);
   doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont(font, headingStyle);
+  if (arabic) {
+    const lines: string[] = doc.splitTextToSize(subtitle, pageW - 28);
+    doc.text(lines, pageW - 14, 34, { align: 'right' });
+    return 40 + (lines.length - 1) * 14 * doc.getLineHeightFactor() / doc.internal.scaleFactor;
+  }
   doc.text(subtitle, 14, 34);
+  return 40;
 }
 
-function drawFooter(doc: jsPDF, label: string) {
+function drawFooter(doc: jsPDF, label: string, font: string) {
   const pageCount = doc.getNumberOfPages();
   const pageH = doc.internal.pageSize.getHeight();
   const pageW = doc.internal.pageSize.getWidth();
+  if (font !== 'helvetica') doc.setFont(font, 'normal');
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     doc.setFontSize(8);
@@ -69,6 +80,20 @@ function drawFooter(doc: jsPDF, label: string) {
       { align: 'center' }
     );
   }
+}
+
+async function createReport(language: 'en' | 'ar') {
+  const doc = new jsPDF({ unit: 'mm', format: 'a4', compress: language === 'ar' });
+  const font = language === 'ar' ? await (await import('./arabicText')).useArabicText(doc) : 'helvetica';
+  const table = (options: Parameters<typeof autoTable>[1]) => {
+    if (language === 'en') {
+      autoTable(doc, options);
+      return;
+    }
+    const rtl = toRtlTable(options);
+    autoTable(doc, { ...rtl, styles: { ...rtl.styles, font } });
+  };
+  return { doc, font, table };
 }
 
 // i18next's typed TFunction is picky about the second-arg overloads; we only
@@ -87,30 +112,23 @@ export interface SubmissionReportInput {
 
 export async function generateSubmissionReport(input: SubmissionReportInput): Promise<void> {
   const { submission, project, findings, t, brand, pageLabel, language = 'en' } = input;
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  // Dynamically imported so the ~65KB Arabic glyph subset ships only to users
-  // who actually generate a report, instead of bloating every Reports-page load.
-  const { pickFontFor } = await import('./arabicFont');
-  const bodyFont = pickFontFor(doc, language);
-  doc.setFont(bodyFont);
-  doc.setR2L(language === 'ar');
-  const table = (options: Parameters<typeof autoTable>[1]) =>
-    autoTable(doc, language === 'ar' ? toRtlTable(options) : options);
-  drawHeader(doc, brand, submission.document_name);
+  const { doc, font, table } = await createReport(language);
+  const startY = drawHeader(doc, brand, submission.document_name, font);
+  const missing = language === 'ar' ? '–' : '-';
 
   doc.setFontSize(9);
-  doc.setFont('helvetica', 'normal');
+  doc.setFont(font, 'normal');
   doc.setTextColor(...MUTED_COLOR);
   const meta = [
-    [`${t('submission.meta.project')}:`, project?.name ?? '-'],
-    [`${t('project.meta.contract_ref')}:`, project?.contract_ref ?? '-'],
+    [`${t('submission.meta.project')}:`, project?.name ?? missing],
+    [`${t('project.meta.contract_ref')}:`, project?.contract_ref ?? missing],
     [`${t('submission.meta.uploaded')}:`, new Date(submission.uploaded_at).toLocaleString()],
-    [`${t('submission.meta.compliance')}:`, submission.compliance_score != null ? `${submission.compliance_score}/100` : '-'],
-    [`${t('status.green')}:`, submission.traffic_light ?? '-'],
+    [`${t('submission.meta.compliance')}:`, submission.compliance_score != null ? `${submission.compliance_score}/100` : missing],
+    [`${t('status.green')}:`, submission.traffic_light ?? missing],
     [`${t('submission.meta.approval')}:`, submission.approval_status],
   ];
   table({
-    startY: 40,
+    startY,
     body: meta,
     theme: 'plain',
     styles: { fontSize: 9, textColor: [15, 23, 42] as [number, number, number] },
@@ -121,8 +139,8 @@ export async function generateSubmissionReport(input: SubmissionReportInput): Pr
     t(`severity.${f.severity}`, f.severity),
     t(`findingType.${f.finding_type}`, f.finding_type),
     f.title,
-    f.contract_clause_ref ?? '-',
-    f.evidence_extract ?? '-',
+    f.contract_clause_ref ?? missing,
+    f.evidence_extract ?? missing,
     `${f.confidence_percent}%`,
   ]);
 
@@ -150,7 +168,7 @@ export async function generateSubmissionReport(input: SubmissionReportInput): Pr
     margin: { top: 40 },
   });
 
-  drawFooter(doc, pageLabel);
+  drawFooter(doc, pageLabel, font);
   const filename = `vertex-submission-${submission.id.slice(0, 8)}.pdf`;
   doc.save(filename);
 }
@@ -169,21 +187,17 @@ export interface ProjectReportInput {
 
 export async function generateProjectReport(input: ProjectReportInput): Promise<void> {
   const { project, submissions, obligations, kpi, insurance, t, brand, pageLabel, language = 'en' } = input;
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  const { pickFontFor } = await import('./arabicFont');
-  doc.setFont(pickFontFor(doc, language));
-  doc.setR2L(language === 'ar');
-  const table = (options: Parameters<typeof autoTable>[1]) =>
-    autoTable(doc, language === 'ar' ? toRtlTable(options) : options);
-  drawHeader(doc, brand, project.name);
+  const { doc, font, table } = await createReport(language);
+  const startY = drawHeader(doc, brand, project.name, font);
+  const missing = language === 'ar' ? '–' : '-';
 
   table({
-    startY: 40,
+    startY,
     body: [
       [`${t('project.meta.contract_ref')}:`, project.contract_ref],
-      [`${t('project.meta.value')}:`, project.contract_value_aed != null ? `AED ${project.contract_value_aed.toLocaleString()}` : '-'],
-      [`${t('project.meta.commencement')}:`, project.commencement_date ?? '-'],
-      [`${t('project.meta.completion')}:`, project.completion_date ?? '-'],
+      [`${t('project.meta.value')}:`, project.contract_value_aed != null ? `AED ${project.contract_value_aed.toLocaleString()}` : missing],
+      [`${t('project.meta.commencement')}:`, project.commencement_date ?? missing],
+      [`${t('project.meta.completion')}:`, project.completion_date ?? missing],
       [`${t('project.meta.kpi_cap')}:`, `${project.kpi_cap_percent}%`],
       [`${t('project.meta.status')}:`, project.status],
     ],
@@ -196,8 +210,8 @@ export async function generateProjectReport(input: ProjectReportInput): Promise<
     new Date(s.uploaded_at).toLocaleDateString(),
     s.document_name,
     s.submission_type,
-    s.compliance_score != null ? `${s.compliance_score}/100` : '-',
-    s.traffic_light ?? '-',
+    s.compliance_score != null ? `${s.compliance_score}/100` : missing,
+    s.traffic_light ?? missing,
     s.approval_status,
   ]);
   table({
@@ -210,18 +224,18 @@ export async function generateProjectReport(input: ProjectReportInput): Promise<
       t('status.green'),
       t('submission.meta.approval'),
     ]],
-    body: submissionRows.length === 0 ? [['-', '-', '-', '-', '-', '-']] : submissionRows,
+    body: submissionRows.length === 0 ? [[missing, missing, missing, missing, missing, missing]] : submissionRows,
     theme: 'striped',
     headStyles: { fillColor: BRAND_COLOR, textColor: 255, fontSize: 9 },
     bodyStyles: { fontSize: 8 },
   });
 
   const obligationRows = obligations.map((o) => [
-    o.due_date ?? '-',
+    o.due_date ?? missing,
     o.obligation_type,
     o.description,
     o.status,
-    o.days_remaining ?? '-',
+    o.days_remaining ?? missing,
   ]);
   table({
     startY: (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 6,
@@ -232,7 +246,7 @@ export async function generateProjectReport(input: ProjectReportInput): Promise<
       t('obligationsPage.meta.type'),
       t('obligationsPage.meta.daysRemaining'),
     ]],
-    body: obligationRows.length === 0 ? [['-', '-', '-', '-', '-']] : obligationRows,
+    body: obligationRows.length === 0 ? [[missing, missing, missing, missing, missing]] : obligationRows,
     theme: 'striped',
     headStyles: { fillColor: BRAND_COLOR, textColor: 255, fontSize: 9 },
     bodyStyles: { fontSize: 8 },
@@ -243,7 +257,7 @@ export async function generateProjectReport(input: ProjectReportInput): Promise<
     k.kpi_category,
     String(k.units_triggered),
     `AED ${Number(k.penalty_amount_aed).toLocaleString()}`,
-    k.deduction_approved ? '✓' : '-',
+    k.deduction_approved ? (language === 'ar' ? t('submission.approvalStatus.approved') : '✓') : missing,
   ]);
   table({
     startY: (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 6,
@@ -254,7 +268,7 @@ export async function generateProjectReport(input: ProjectReportInput): Promise<
       t('kpiPage.table.penalty'),
       t('kpiPage.table.approved'),
     ]],
-    body: kpiRows.length === 0 ? [['-', '-', '-', '-', '-']] : kpiRows,
+    body: kpiRows.length === 0 ? [[missing, missing, missing, missing, missing]] : kpiRows,
     theme: 'striped',
     headStyles: { fillColor: BRAND_COLOR, textColor: 255, fontSize: 9 },
     bodyStyles: { fontSize: 8 },
@@ -262,10 +276,10 @@ export async function generateProjectReport(input: ProjectReportInput): Promise<
 
   const insuranceRows = insurance.map((p) => [
     p.coverage_type,
-    p.provider ?? '-',
-    p.policy_number ?? '-',
-    p.expiry_date ?? '-',
-    p.days_to_expiry ?? '-',
+    p.provider ?? missing,
+    p.policy_number ?? missing,
+    p.expiry_date ?? missing,
+    p.days_to_expiry ?? missing,
     p.renewal_status,
   ]);
   table({
@@ -278,13 +292,13 @@ export async function generateProjectReport(input: ProjectReportInput): Promise<
       t('insurancePage.table.daysToExpiry'),
       t('insurancePage.table.status'),
     ]],
-    body: insuranceRows.length === 0 ? [['-', '-', '-', '-', '-', '-']] : insuranceRows,
+    body: insuranceRows.length === 0 ? [[missing, missing, missing, missing, missing, missing]] : insuranceRows,
     theme: 'striped',
     headStyles: { fillColor: BRAND_COLOR, textColor: 255, fontSize: 9 },
     bodyStyles: { fontSize: 8 },
   });
 
-  drawFooter(doc, pageLabel);
+  drawFooter(doc, pageLabel, font);
   const filename = `vertex-project-${project.id.slice(0, 8)}.pdf`;
   doc.save(filename);
 }

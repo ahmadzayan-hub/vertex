@@ -18,6 +18,8 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
+    "bidi-js": "1.1.0",
+    "harfbuzzjs": "0.10.3",
     "i18next": "^23.15.1",
     "i18next-browser-languagedetector": "^8.0.0",
     "jspdf": "^4.2.1",
