@@ -99,6 +99,9 @@ project secrets**, never in the browser bundle.
 | `npm run e2e:install` | Install Chromium for Playwright |
 | `npm run bundle:check` | Bundle size check |
 
+The PDF text tests require Python 3 and `python3 -m pip install pypdfium2==5.13.0`.
+See [Arabic PDF verification](docs/ARABIC_PDF_VERIFICATION.md) for the targeted command and test scope.
+
 ## Project structure
 
 ```
