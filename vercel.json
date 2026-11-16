@@ -48,6 +48,16 @@
     }
   ],
   "rewrites": [
-    { "source": "/((?!api/|assets/|.*\\.).*)", "destination": "/index.html" }
+    { "source": "/login", "destination": "/" },
+    { "source": "/dashboard", "destination": "/" },
+    { "source": "/upload", "destination": "/" },
+    { "source": "/submissions/:id", "destination": "/" },
+    { "source": "/projects/:id", "destination": "/" },
+    { "source": "/kpi", "destination": "/" },
+    { "source": "/obligations", "destination": "/" },
+    { "source": "/insurance", "destination": "/" },
+    { "source": "/projects", "destination": "/" },
+    { "source": "/reports", "destination": "/" },
+    { "source": "/analytics", "destination": "/" }
   ]
 }
