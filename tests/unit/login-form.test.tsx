@@ -7,7 +7,10 @@ import i18n from '@/utils/i18n';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { AuthContext, type AuthContextValue } from '@/hooks/useAuth';
 
-afterEach(cleanup);
+afterEach(async () => {
+  cleanup();
+  await i18n.changeLanguage('en');
+});
 
 beforeAll(async () => {
   await i18n.changeLanguage('en');
@@ -33,16 +36,21 @@ function renderForm(configured: boolean, login = vi.fn().mockResolvedValue({ ok:
 }
 
 describe('LoginForm', () => {
-  it('shows a configuration notice and never calls login when Supabase is missing', async () => {
+  it('shows setup guidance without collecting credentials when sign-in is unavailable', () => {
     const { login } = renderForm(false);
-    expect(screen.getByRole('status')).toHaveTextContent(/not connected to a Supabase project/i);
-
-    await userEvent.type(screen.getByLabelText('Email address'), 'a@b.co');
-    await userEvent.type(screen.getByLabelText('Password'), 'Password1');
-    await userEvent.click(screen.getByRole('button', { name: 'Log in' }));
-
+    expect(screen.getByRole('status')).toHaveTextContent(/workspace sign-in is being set up/i);
+    expect(screen.getByRole('status')).toHaveTextContent(/workspace administrator/i);
+    expect(screen.getByRole('status')).not.toHaveTextContent(/Supabase|VITE_/i);
+    expect(screen.queryByLabelText('Email address')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Password')).not.toBeInTheDocument();
     expect(login).not.toHaveBeenCalled();
-    expect(screen.getByRole('alert')).toHaveTextContent(/no Supabase project is configured/i);
+  });
+
+  it('localizes setup guidance in Arabic', async () => {
+    await i18n.changeLanguage('ar');
+    renderForm(false);
+    expect(screen.getByRole('status')).toHaveTextContent('يجري إعداد تسجيل الدخول');
+    expect(screen.getByRole('status')).toHaveTextContent('مسؤول مساحة العمل');
   });
 
   it('calls login when Supabase is configured', async () => {

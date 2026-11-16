@@ -44,11 +44,6 @@ export function LoginForm({ configured = isSupabaseConfigured }: LoginFormProps 
       return;
     }
 
-    if (!configured) {
-      setError(t('auth.notConfiguredError'));
-      return;
-    }
-
     setSubmitting(true);
     const result = await login(email, password);
     setSubmitting(false);
@@ -60,17 +55,21 @@ export function LoginForm({ configured = isSupabaseConfigured }: LoginFormProps 
     navigate(from, { replace: true });
   }
 
+  if (!configured) {
+    return (
+      <section
+        role="status"
+        className="rounded-lg border border-status-amber/40 bg-amber-50 p-4 text-sm text-amber-900"
+      >
+        <h2 className="text-base font-semibold">{t('auth.setupTitle')}</h2>
+        <p className="mt-1 leading-relaxed">{t('auth.notConfigured')}</p>
+      </section>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} noValidate aria-describedby={error ? 'login-error' : undefined}>
       <div className="space-y-4">
-        {!configured && (
-          <div
-            role="status"
-            className="rounded-lg border border-status-amber/40 bg-amber-50 px-3 py-2 text-sm text-amber-800"
-          >
-            {t('auth.notConfigured')}
-          </div>
-        )}
         <div>
           <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-700">
             {t('auth.email')}
